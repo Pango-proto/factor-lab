@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "protocol_id": "core6_independent_audit_v1",
+  "purpose": "read_only_independent_metric_audit_and_descriptive_attribution",
+  "authorization": "继续推进",
+  "holdout_start": "2025-03-01",
+  "silver_version_id": "silver_version_fe682dc4d9497f23",
+  "knowledge_time": "2026-09-17T03:07:36.035987+00:00",
+  "parents": {
+    "reconstruction": {
+      "path": "data/diagnostics/core6_reconstruction_v1/run_id=core6_reconstructed_d2a15991fd32b150/_MANIFEST.json",
+      "sha256": "b1d05c3e95f0d85dff85a388c385229e924cf1a1bfb793e0b32eaab029c74915"
+    },
+    "calibration": {
+      "path": "data/diagnostics/core6_calibration_v1/run_id=core6_calibration_ec612f1bd616db65/_MANIFEST.json",
+      "sha256": "28746e261dcab5a07e9fa4d109ffd9caac3a5db773054ccea9d3a8481de754da"
+    }
+  },
+  "bindings": {
+    "config/weight_metric_contract_v1.json": "6a947ecc657c9bba594a7ac21dca321aad8a246d1a4673498906227c31e3ec7f",
+    "config/family_root_declarations_v1.json": "bfbaa3ef3eb00ae55b1414c20f69c07cfee53aceb997b22c9e292b2610598bb4",
+    "config/alpha_risk_migration_protocol_v1.json": "a49db7d9621ecd12735dd33383d126625ae7fc232dd75b11c0efaaba82a59555",
+    "config/g4_statistical_factor_destination_v1.json": "5b9c81b5f94c8a50da931ba5a043016cdae309cdd2f08862367db45441c42f61",
+    "config/risk_core6_design_v2.json": "cd92bc3754d393e7d49d36b8cc3eaa9a72dcb5b8e753e44c7368ab9ebce52574",
+    "config/g4_style_loading_semantic_probe_v1.json": "5157d99acea488535333779ccbaa0940cfaafbcfd4b2673fbfec56caa6e389a6",
+    "config/g4_statistical_loading_semantic_probe_v1.json": "22d78bf37ea4207007c5d5d0f524e4cd2091a5770bbb95d6ba489a640ee4e965",
+    "config/alpha_dimension_budget_v1.json": "89ccba310736fd51618bdf3442fd435fe41c24e3e3571c3206ebc28f82a8494d",
+    "data/diagnostics/weight_metric_migration/legacy_cleanup_v1.json": "1e7893005ce3ad9a1359ae1415d3e675c76292b8fd471b3d43e8123f92887c3e"
+  },
+  "predecessors": {
+    "core6": {
+      "size": [],
+      "beta": [
+        "size"
+      ],
+      "residual_volatility": [
+        "size",
+        "beta"
+      ],
+      "liquidity": [
+        "size"
+      ],
+      "nonlinear_size": [
+        "size"
+      ],
+      "momentum": [
+        "size",
+        "beta"
+      ]
+    },
+    "old44": {
+      "size": [],
+      "beta": [
+        "size"
+      ],
+      "residual_volatility": [
+        "size",
+        "beta"
+      ],
+      "liquidity": [
+        "size"
+      ],
+      "nonlinear_size": [
+        "size"
+      ],
+      "listing_age": [
+        "size"
+      ]
+    }
+  },
+  "missing_events": [
+    {
+      "asset_id": "000996.SZ",
+      "cutoff": "2024-06-27",
+      "outcome_date": "2024-06-28"
+    },
+    {
+      "asset_id": "002087.SZ",
+      "cutoff": "2024-06-27",
+      "outcome_date": "2024-06-28"
+    },
+    {
+      "asset_id": "300742.SZ",
+      "cutoff": "2024-07-19",
+      "outcome_date": "2024-07-22"
+    },
+    {
+      "asset_id": "300799.SZ",
+      "cutoff": "2024-07-26",
+      "outcome_date": "2024-07-29"
+    }
+  ],
+  "metric_tolerance": "inherited_1e-8_no_change",
+  "residual_statistics": "uncentered_cross_products_and_mean_variance_identity_not_covariance_test",
+  "refit_allowed": false,
+  "role_migration_allowed": false,
+  "production_eligible": false
+}

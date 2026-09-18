@@ -13,7 +13,7 @@
 .github/workflows/              GitHub Actions：锁定依赖安装、源码检查、合成测试、前端构建。
 config/                        版本化的模型、研究协议、参数、数据政策和审计绑定 JSON。
                                其中引用的本地数据和 Markdown 证据不随仓库上传。
-docs/                          项目结构、使用及协作说明；本轮仅上传非 Markdown 文本。
+docs/                          项目结构、使用及协作说明，当前以纯文本保存。
 ops/                           运维配置模板；实际安装使用的机器专属 .plist 留在本地。
 public/                        前端静态资源入口；demo-backtest/ 下的生成物不上传。
 scripts/                       环境初始化、开发启动、数据检查、维护及旧任务兼容入口。
@@ -26,9 +26,7 @@ frontend/                      React / TypeScript 前端，只展示和交互，
       locked/                  锁定布局视图。
       widgets/                 工作台卡片与数据展示。
   config/                      前端导航、管道和工作台配置。
-  features/                    按研究、评分领域拆分的前端状态和逻辑。
-    research/                  研究界面相关逻辑。
-    scoring/                   评分界面相关逻辑。
+  features/                    预留的研究、评分前端目录；空目录不会单独进入 Git。
 backend/factor_matrix/          Python 后端包；cli.py / cli_parser.py 提供正式命令入口。
                                根模块负责数据接入、标准化、存储、质量、版本读取与 API。
   calculation/                 正式计算与编排。
@@ -39,14 +37,19 @@ backend/factor_matrix/          Python 后端包；cli.py / cli_parser.py 提供
     l2/                        收益分解、风险估计、研究评估与 G3/G4 诊断。
     publishing/                工件发布和 CURRENT 指针的校验逻辑。
     services/                  业务流程唯一实现，包括账本、回测、研究及独立诊断。
+      core6_admission.py       六风格风险准入的回溯重评。
+      core6_independent_audit.py 独立权重、正交性、残差和缺失事件审计。
+      risk_acceptance_migration.py 登记库增量迁移，迁移前备份并核对旧记录。
   diagnostics/                 数据覆盖、上市窗口和历史差异等诊断。
   factor_engine/               因子插件契约、发现、注册表和存储。
     diagnostics/               因子诊断命名空间（空目录不会单独进入 Git）。
     plugins/risk/              风险候选因子实现。
-  risk_model/                  风险模型配置与契约。
+  risk_model/                  风险模型配置、契约及基底/协方差/真实时点证据的独立验收状态。
+  revisioned_silver.py          Silver 时点读取，支持显式固定已发布版本及分区范围。
+  api.py                       前端查询接口，含只读风险准入状态 /api/risk-acceptance。
   scoring/                     评分命名空间（当前为空）。
-tests/                         Python 单元/合成工程测试与前端曲线几何测试。
-                               临时输入在测试临时目录生成，不依赖真实市场数据库。
+tests/                         Python 工程测试与前端曲线几何测试。
+                               合成测试在临时目录生成输入；真实本地证据测试用 local_data 标记隔离。
 experiments/                    独立研究分支上的实验说明与执行边界；main 可无此目录。
   fracdiff-v1/                  分数差分 R0 工作区契约，实际输入绑定另在本地登记。
 
@@ -63,7 +66,7 @@ index.html / vite.config.ts / tsconfig.json 前端入口、打包及类型检查
 
 仅保存在本地的目录与文件
 ------------------------
-data/                          约 6 GB 的事实层、版本、研究产物及元数据，不放入 Git。
+data/                          事实层、版本、研究产物及元数据，不放入 Git。
   bronze/                      原始供应商响应及其观测记录。
   silver/                      标准化、版本化、支持时点读取的数据。
   gold/                        已物化的上层矩阵、风险及研究工件。
@@ -84,21 +87,36 @@ ops/*.plist                    当前机器实际使用的定时任务配置。
 
 实验分支工作流
 --------------
-1. main 保存此次代码基线；research/fracdiff-v1 从该基线分出。
+1. main 保存主项目代码；research/fracdiff-v1 独立推进分数差分 R0 实验。
 2. 在独立 worktree 工作，原目录继续停留在 main；不要同时修改同一个工作目录。
 3. worktree 用自己的 .venv / .uv-cache / data / reports。
 4. 先完成数据更新与质量门，再将 manifest、版本和实际工件哈希固定为输入。
    只读快照或独立副本可共享；不要把原项目可写 data/ 软链接到实验 data/。
 5. R0 截止 2025-02-28，保留固定 d 网格、252 点窗口、训练/验证划分与合成 seed。
 6. 每次运行登记代码提交和未提交改动状态、依赖锁、批准与方案哈希、支持集哈希。
-7. 实验产物保留在分支工作区本地；通用实现和测试经审阅后才合并 main。
+7. 原始数据和完整实验产物保留在分支工作区本地；结果说明、图表与核验摘要按分支约定发布。
+   通用实现和测试经审阅后才合并 main。
+
+当前进展（2026-09-18）
+----------------------
+主项目已完成 frontend/、backend/ 目录迁移，启动、构建、测试和配置引用均使用新路径。
+风险准入已拆分为基底 G6a、协方差 G6b 和真实时点证据三个状态；旧 frozen 不自动取得新认证。
+登记库迁移保留原有记录，增加证据绑定、只追加事件和基底身份锁定；状态查询不授予生产发布许可。
+独立权重/正交性数值复算已通过，残差归因及缺失收益事件核对已完成。
+正式 G6a 仍缺角色迁移和历史研究成本证据；G6b 校准失败，完整残差协方差及真实时点证据仍待验收。
+
+分数差分 R0 已在独立工作区执行并核验，结果说明位于研究分支：
+  experiments/fracdiff-v1/results/20260918/README.md
+该分支已单独纳入结果说明、图表及核验摘要；原始数据、完整运行工件和本地证据仍不上传。
+实验实现尚未合并 main，未进入 Alpha 注册或策略回测，Holdout 继续封存。
+研究分支保留自己的源码布局与依赖环境，不能直接套用 main 的 backend/ 路径；以分支说明为准。
 
 验证与发布门
 ------------
 GitHub CI 使用 -m "not local_data" 执行工程测试，保留 G3 gate 合成正反案例。
 local_data 标记隔离真实本地证据、权重工件哈希和六风格批准证据检查；普通 pytest 不过滤它们。
 在原数据工作区运行 uv run --locked --extra dev python -m pytest -q -m local_data
-可单独执行这三项；缺少工件或哈希不符仍然失败。
+可单独运行真实本地证据测试；缺少工件或哈希不符仍然失败。
 真实 G3 发布门仍在具有完整本地证据的环境中执行：
   uv run --locked python scripts/check_g3_release_gate.py
 不因源码仓库不含 data/ 而将真实发布门降级为通过。

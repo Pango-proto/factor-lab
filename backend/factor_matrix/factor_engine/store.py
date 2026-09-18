@@ -1098,8 +1098,12 @@ class FactorRegistryStore:
                 if current != requested:
                     raise ValueError("FROZEN_RISK_SET_MEMBERSHIP_IMMUTABLE")
                 old_acceptance = registry_acceptance(connection, factor_set.risk_set_version)
-                if acceptance != old_acceptance:
+                explicit_acceptance = any(getattr(acceptance, stage+'_acceptance_status')!='unknown'
+                                          for stage in ('basis','covariance','pit'))
+                if (acceptance.risk_basis_id is not None and acceptance.risk_basis_id != old_acceptance.risk_basis_id) or (explicit_acceptance and acceptance != old_acceptance):
                     raise ValueError('RISK_ACCEPTANCE_UPDATE_REQUIRES_EXPLICIT_EVIDENCE_API')
+                # Catalog/bootstrap sync with legacy defaults must neither revoke
+                # certification nor prevent read-only API startup after G6a.
                 return
             connection.execute(
                 """INSERT INTO risk_set(
@@ -1195,6 +1199,13 @@ class FactorRegistryStore:
               (acceptance.risk_basis_id,acceptance.basis_acceptance_status,acceptance.covariance_acceptance_status,
                acceptance.pit_acceptance_status,json.dumps(acceptance.basis_evidence),json.dumps(acceptance.covariance_evidence),
                json.dumps(acceptance.pit_evidence),factor_set.risk_set_version))
+            self._append_acceptance_event(connection,acceptance)
+
+    @staticmethod
+    def _append_acceptance_event(connection, state):
+        payload=json.dumps(vars(state),sort_keys=True,separators=(',',':'))
+        connection.execute('INSERT OR IGNORE INTO risk_acceptance_event VALUES(?,?,?,?)',
+            (hashlib.sha256(payload.encode()).hexdigest(),state.risk_set_version,payload,datetime.now(timezone.utc).isoformat()))
 
     def record_risk_acceptance(self, state) -> None:
         """Certify stages against a registered, matching basis; never change membership."""
@@ -1216,3 +1227,4 @@ class FactorRegistryStore:
               WHERE risk_set_version=?""",(state.basis_acceptance_status,state.covariance_acceptance_status,
               state.pit_acceptance_status,json.dumps(state.basis_evidence),json.dumps(state.covariance_evidence),
               json.dumps(state.pit_evidence),state.risk_set_version))
+            self._append_acceptance_event(connection,state)

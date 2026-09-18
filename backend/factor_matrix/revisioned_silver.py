@@ -181,8 +181,24 @@ class SilverVersionLedger:
 class SilverAsOfReader:
     """Build DuckDB relations; callers must supply a knowledge timestamp."""
 
-    def __init__(self, lake: DataLake, base_id: str = "legacy_base_v1") -> None:
+    def __init__(self, lake: DataLake, base_id: str = "legacy_base_v1", *,
+                 version_id: str | None = None) -> None:
         self.lake = lake
+        self.pinned_version = None
+        if version_id is not None:
+            if not version_id.startswith('silver_version_') or not all(
+                c in '0123456789abcdef' for c in version_id.removeprefix('silver_version_')
+            ):
+                raise ValueError('SILVER_PINNED_VERSION_ID_INVALID')
+            version_path = lake.metadata/'silver_versions'/f'{version_id}.json'
+            pinned = json.loads(version_path.read_text(encoding='utf-8'))
+            identity = {key: pinned[key] for key in (
+                'base_id', 'base_snapshot_sha256', 'parent_version_id', 'changes', 'quality_gate')}
+            digest = json_hash(identity)
+            if pinned['version_id'] != version_id or pinned['version_sha256'] != digest or version_id != f'silver_version_{digest[:16]}':
+                raise ValueError('SILVER_PINNED_VERSION_HASH_MISMATCH')
+            self.pinned_version = pinned
+            base_id = pinned['base_id']
         manifest = lake.metadata / "base_manifests" / f"{base_id}.json"
         self.base = json.loads(manifest.read_text(encoding="utf-8"))
         self.base_revision_at = self.base["frozen_at"]
@@ -232,13 +248,17 @@ class SilverAsOfReader:
                 f"{first_seen_projection} "
                 f"FROM read_parquet('{base_path}', hive_partitioning=false)"
             )
-        current = SilverVersionLedger(self.lake).current()
+        current = self.pinned_version if self.pinned_version is not None else SilverVersionLedger(self.lake).current()
         published_paths = None
         if current is not None:
             published_paths = {
                 str(item["path"]): item for item in current.get("changes", [])
                 if item.get("table") == table and item.get("layer") in {"delta", "corrections"}
             }
+            if self.pinned_version is not None:
+                missing = [path for path in published_paths if not (self.lake.root/path).is_file()]
+                if missing:
+                    raise FileNotFoundError('SILVER_PINNED_PARTITION_MISSING:'+missing[0])
         for layer in ("delta", "corrections"):
             if published_paths is None:
                 files = sorted((self.lake.silver / layer / table).glob("**/data.parquet"))

@@ -2,6 +2,7 @@ from datetime import UTC, date, datetime, timedelta
 import json
 
 import polars as pl
+import pytest
 
 from factor_matrix.revisioned_silver import (
     RevisionedSilverStore, SilverAsOfReader, SilverVersionLedger,
@@ -124,3 +125,35 @@ def test_unpublished_delta_is_invisible_when_version_ledger_exists(tmp_path):
     )
     with open_duckdb() as connection:
         assert connection.execute(f"SELECT count(*) FROM ({sql})").fetchone()[0] == 1
+
+
+def test_pinned_reader_survives_new_current_and_rejects_missing_partition(tmp_path):
+    lake = DataLake(tmp_path)
+    root = lake.metadata/'base_manifests'
+    root.mkdir(parents=True)
+    (root/'legacy_base_v1.json').write_text(json.dumps({
+        'snapshot_id': 'base', 'frozen_at': '2026-08-14T00:00:00+00:00', 'artifacts': {}}))
+    store, ledger = RevisionedSilverStore(lake), SilverVersionLedger(lake)
+    frame = pl.DataFrame({'trade_date': [date(2024, 1, 2)], 'asset_id': ['TEST'], 'raw_close': [10.]})
+    first = store.append('prices_daily', frame, effective_date=date(2024, 1, 2),
+                         first_seen_at=datetime(2026, 8, 15, tzinfo=UTC))
+    v1 = ledger.publish(base_id='legacy_base_v1', base_snapshot_sha256='base',
+        observed_at=datetime(2026, 8, 15, tzinfo=UTC), changes=[first], quality_gate={'status': 'passed'})
+    pinned = SilverAsOfReader(lake, version_id=v1['version_id'])
+    second = store.append('prices_daily', frame.with_columns(pl.lit(99.).alias('raw_close')),
+        effective_date=date(2024, 1, 2), first_seen_at=datetime(2026, 8, 16, tzinfo=UTC))
+    ledger.publish(base_id='legacy_base_v1', base_snapshot_sha256='base',
+        observed_at=datetime(2026, 8, 16, tzinfo=UTC), changes=[first, second], quality_gate={'status': 'passed'})
+    timestamp = datetime(2026, 8, 17, tzinfo=UTC)
+    with open_duckdb() as conn:
+        assert conn.execute(f"SELECT raw_close FROM ({pinned.relation_sql('prices_daily', timestamp)})").fetchone()[0] == 10.
+        assert conn.execute(f"SELECT raw_close FROM ({SilverAsOfReader(lake).relation_sql('prices_daily', timestamp)})").fetchone()[0] == 99.
+    (tmp_path/first['path']).unlink()
+    with pytest.raises(FileNotFoundError, match='PINNED_PARTITION_MISSING'):
+        pinned.relation_sql('prices_daily', timestamp)
+    vp = lake.metadata/'silver_versions'/f"{v1['version_id']}.json"
+    tampered = json.loads(vp.read_text())
+    tampered['quality_gate']['status'] = 'different'
+    vp.write_text(json.dumps(tampered))
+    with pytest.raises(ValueError, match='PINNED_VERSION_HASH_MISMATCH'):
+        SilverAsOfReader(lake, version_id=v1['version_id'])

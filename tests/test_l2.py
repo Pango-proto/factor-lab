@@ -60,8 +60,15 @@ def predictivity_config():
 def issue_l2_test_attempt(
     store: ResearchEventStore, *, factor_id: str = "factor_a", horizon_days: int = 1,
 ) -> str:
-    """Create the minimal frozen registry state required by the audited L2a API."""
+    """Create explicitly certified G6a state; legacy frozen alone is insufficient."""
+    import hashlib
+    from factor_matrix.risk_model.acceptance import REQUIRED_CHECKS
     FactorRegistryStore(store.path).initialize()
+    evidence_path=store.path.parent/'l2_test_basis_evidence.json'
+    evidence_path.write_text(json.dumps({'schema':'risk_acceptance_evidence_v2','run_id':'l2_fixture_g6a',
+        'stage':'basis','risk_set_version':1,'risk_basis_id':'l2_fixture_basis','status':'passed',
+        'holdout_evaluated':False,'checks':dict.fromkeys(REQUIRED_CHECKS['basis'],True)}))
+    basis_ref=json.dumps({'path':str(evidence_path.resolve()),'sha256':hashlib.sha256(evidence_path.read_bytes()).hexdigest()})
     with sqlite3.connect(store.path) as connection:
         connection.execute(
             """
@@ -79,10 +86,12 @@ def issue_l2_test_attempt(
         connection.execute(
             """
             INSERT INTO risk_set(
-              risk_set_version, status, purpose, rationale, created_at
-            ) VALUES (?,?,?,?,?)
+              risk_set_version, status, purpose, rationale, created_at,
+              risk_basis_id,basis_acceptance_status,basis_evidence_json
+            ) VALUES (?,?,?,?,?,?,?,?)
             """,
-            (1, "frozen", "research", "test fixture", "2026-08-14T09:00:00"),
+            (1, "frozen", "research", "test fixture", "2026-08-14T09:00:00",
+             'l2_fixture_basis','passed',basis_ref),
         )
     return store.issue_attempt(
         family_root_id=factor_id,

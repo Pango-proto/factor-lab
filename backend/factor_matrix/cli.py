@@ -161,6 +161,22 @@ def main() -> int:
         print(run_calibration(project_root=args.project_root.resolve(), config_path=args.config.resolve(),
                               config_sha256=args.config_sha256, output_root=args.output_root.resolve()))
         return 0
+    if args.command == 'audit-core6-independent-v1':
+        from .calculation.services.core6_independent_audit import run_independent_audit
+        print(run_independent_audit(project_root=args.project_root.resolve(), config_path=args.config.resolve(),
+                                    config_sha256=args.config_sha256, output_root=args.output_root.resolve()))
+        return 0
+    if args.command == 'reassess-core6-admission-v2':
+        from .calculation.services.core6_admission import run_admission
+        print(run_admission(project_root=args.project_root.resolve(),policy_path=args.policy.resolve(),
+                            policy_sha256=args.policy_sha256,output_root=args.output_root.resolve()))
+        return 0
+    if args.command == 'migrate-risk-acceptance-v2':
+        from .calculation.services.risk_acceptance_migration import migrate_acceptance
+        print(migrate_acceptance(registry_path=args.registry.resolve(),project_root=args.project_root.resolve(),
+                                approval_path=args.approval.resolve(),approval_sha256=args.approval_sha256,
+                                output_root=args.output_root.resolve()))
+        return 0
     if args.command == 'build-risk-snapshot-v1':
         from .calculation.services.risk_snapshot import publish_request
         print(publish_request(args.input.resolve(), args.input_sha256, args.output_dir.resolve()))

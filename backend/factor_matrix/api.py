@@ -7,6 +7,7 @@ full security-by-factor matrix or any covariance matrix.
 from __future__ import annotations
 
 import json
+import sqlite3
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -21,6 +22,29 @@ from .factor_engine import (
 )
 from .risk_model import load_risk_factor_set
 from .storage import DataLake, open_duckdb
+from .risk_model.acceptance import registry_acceptance
+
+
+def risk_acceptance_response(registry_path: Path) -> dict[str, Any]:
+    """Read-only stage metadata; never translate old frozen into new approval."""
+    if not registry_path.is_file():
+        return {'schema_version':2,'status':'unavailable','rows':[],'production_allowed':False}
+    rows=[]
+    with sqlite3.connect(f'file:{registry_path.resolve()}?mode=ro',uri=True) as c:
+        for version,status in c.execute('SELECT risk_set_version,status FROM risk_set ORDER BY risk_set_version').fetchall():
+            try:
+                state=registry_acceptance(c,version)
+                rows.append({'risk_set_version':version,'registry_status':status,
+                    'risk_basis_id':state.risk_basis_id,'basis_acceptance_status':state.basis_acceptance_status,
+                    'covariance_acceptance_status':state.covariance_acceptance_status,
+                    'pit_acceptance_status':state.pit_acceptance_status,
+                    'basis_consumption_allowed':state.basis_consumption_allowed,
+                    'risk_optimization_eligible':state.risk_optimization_eligible})
+            except (ValueError,OSError,TypeError,KeyError):
+                rows.append({'risk_set_version':version,'registry_status':status,
+                    'evidence_status':'invalid','basis_consumption_allowed':False,'risk_optimization_eligible':False})
+    return {'schema_version':2,'status':'ready','rows':rows,'production_allowed':False,
+            'publication_status':'not_authorized_by_metadata_endpoint'}
 
 
 def factor_catalog_response(
@@ -123,7 +147,7 @@ def risk_catalog_response(
             "source_fields": list(spec.source_fields),
             "orthogonalize_after": list(spec.orthogonalize_after),
             "registry_status": spec.status.value,
-            "production_status": "blocked_until_risk_factor_set_freeze",
+            "production_status": "blocked_until_basis_covariance_pit_and_publication",
             "family_root_id": spec.family_root_id,
             "description": spec.hypothesis,
         })
@@ -324,6 +348,12 @@ def make_handler(
             parsed = urlparse(self.path)
             path = parsed.path
             query_params = parse_qs(parsed.query)
+            if path == '/api/risk-acceptance':
+                try:
+                    self._json(HTTPStatus.OK,risk_acceptance_response(lake.metadata/'factor_registry.sqlite'))
+                except sqlite3.Error:
+                    self._json(HTTPStatus.SERVICE_UNAVAILABLE,{'status':'unavailable','production_allowed':False})
+                return
             if path == "/api/factors":
                 try:
                     response = factor_catalog_response(

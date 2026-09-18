@@ -86,6 +86,13 @@ def registry_acceptance(connection, version):
 def ensure_acceptance_schema(connection):
     """Additive migration: preserve old rows and frozen semantics, default unknown."""
     columns = {r[1] for r in connection.execute('PRAGMA table_info(risk_set)')}
+    connection.execute('''CREATE TABLE IF NOT EXISTS risk_acceptance_event(
+        event_id TEXT PRIMARY KEY,risk_set_version INTEGER NOT NULL,state_json TEXT NOT NULL,
+        recorded_at TEXT NOT NULL,FOREIGN KEY(risk_set_version) REFERENCES risk_set(risk_set_version))''')
+    for event in ('UPDATE','DELETE'):
+        connection.execute(f'''CREATE TRIGGER IF NOT EXISTS risk_acceptance_event_no_{event.lower()}
+            BEFORE {event} ON risk_acceptance_event
+            BEGIN SELECT RAISE(ABORT,'RISK_ACCEPTANCE_EVENT_APPEND_ONLY'); END''')
     for stage in STAGES:
         name = stage+'_acceptance_status'
         if name not in columns:
@@ -96,9 +103,11 @@ def ensure_acceptance_schema(connection):
     # These supplement legacy frozen triggers. G6a also locks candidate membership.
     for event in ('INSERT', 'UPDATE', 'DELETE'):
         key = 'NEW' if event == 'INSERT' else 'OLD'
+        versions=f'{key}.risk_set_version' if event!='UPDATE' else 'OLD.risk_set_version,NEW.risk_set_version'
+        connection.execute(f'DROP TRIGGER IF EXISTS risk_member_basis_lock_{event.lower()}')
         connection.execute(f"""CREATE TRIGGER IF NOT EXISTS risk_member_basis_lock_{event.lower()}
           BEFORE {event} ON risk_set_member
-          WHEN EXISTS(SELECT 1 FROM risk_set WHERE risk_set_version={key}.risk_set_version
+          WHEN EXISTS(SELECT 1 FROM risk_set WHERE risk_set_version IN ({versions})
                       AND basis_acceptance_status='passed')
           BEGIN SELECT RAISE(ABORT,'ACCEPTED_RISK_BASIS_MEMBER_IMMUTABLE'); END""")
     connection.execute("""CREATE TRIGGER IF NOT EXISTS risk_basis_identity_lock
