@@ -31,7 +31,7 @@ config/ 内已有审计路径及 SHA256 保留原样；这些引用不是随仓�
 本地真实证据检查：uv run --locked --extra dev python -m pytest -q -m local_data
 本地 G3 发布门：uv run --locked python scripts/check_g3_release_gate.py
 
-可选生成前端合成演示（不是市场实验）
+可选生成前端合成演示
 ----------------------------------
 uv run --locked factor-matrix build-backtest-preview-v3
 uv run --locked factor-matrix build-path-ensemble-v1
