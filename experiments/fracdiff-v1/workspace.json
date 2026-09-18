@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "experiment_id": "fracdiff-v1",
+  "branch": "research/fracdiff-v1",
+  "base_branch": "main",
+  "base_commit": "ca85cf10f4697fe11992bc3769ba78203529f524",
+  "status": "workspace_ready_experiment_not_run",
+  "scope": "R0_transform_diagnostics_only",
+  "proposal": {
+    "path": "config/fracdiff_research_proposal_v1.json",
+    "sha256": "aeb1f381e9b196dce4508eed8d6a379a1c11e43d9a0b7dc388705c7dc922c6dd"
+  },
+  "authorization": {
+    "instruction": "先更新数据，然后按照 # 分数差分研究方案 v1 进行实验",
+    "scope": "R0_as_specified_in_proposal",
+    "R1_R2_included": false
+  },
+  "input": {
+    "status": "pending_successful_refresh_and_pinned_snapshot",
+    "manifest": null,
+    "sha256": null,
+    "source_mode": "reconstructed_diagnostic_only",
+    "read_only_snapshot_required": true,
+    "event_date_upper_bound": "2025-02-28",
+    "shared_writable_data_directory_allowed": false
+  },
+  "outputs": {
+    "diagnostics": "data/diagnostics/fracdiff_v1",
+    "reports": "reports/fracdiff_v1",
+    "tracked_by_git": false
+  },
+  "environment": {
+    "python_environment": ".venv",
+    "runtime_lock": "uv.lock",
+    "research_dependency_lock_status": "not_created_yet",
+    "statsmodels_installed_for_experiment": false
+  },
+  "entrypoint": {
+    "planned_command": "diagnose-fracdiff-v1",
+    "implemented": false
+  },
+  "constraints": {
+    "holdout_opened": false,
+    "production_eligible": false,
+    "current_update_allowed": false,
+    "parameter_search_allowed": false
+  },
+  "execution_order": [
+    "refresh_source_data_and_pass_quality_gate",
+    "pin_source_manifest_and_artifact_hashes",
+    "lock_research_dependencies",
+    "implement_service_and_cli",
+    "synthetic_engineering_acceptance",
+    "freeze_input_support_audit",
+    "training_selection",
+    "fixed_validation",
+    "report_without_promotion"
+  ]
+}
