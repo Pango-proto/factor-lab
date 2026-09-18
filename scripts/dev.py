@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> int:
     environment = os.environ.copy()
-    source_root = str(ROOT / "src-python")
+    source_root = str(ROOT / "backend")
     environment["PYTHONPATH"] = os.pathsep.join(
         item for item in (source_root, environment.get("PYTHONPATH", "")) if item
     )

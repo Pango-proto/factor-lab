@@ -18,7 +18,7 @@ import polars as pl
 
 
 PROJECT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PROJECT / "src-python"))
+sys.path.insert(0, str(PROJECT / "backend"))
 
 from factor_matrix.calculation.l2.config import load_return_decomposition_config  # noqa: E402
 from factor_matrix.calculation.l2.contracts import RegressionInput, RegressionMode  # noqa: E402

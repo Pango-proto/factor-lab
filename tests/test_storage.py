@@ -7,7 +7,27 @@ from datetime import date
 
 import polars as pl
 
-from factor_matrix.storage import DataLake, file_sha256, json_hash
+from factor_matrix.storage import DataLake, file_sha256, json_hash, source_tree_hash
+
+
+def test_source_tree_hash_tracks_backend_and_scripts_but_not_frontend(tmp_path: Path) -> None:
+    backend = tmp_path / "backend" / "factor_matrix" / "model.py"
+    script = tmp_path / "scripts" / "run.py"
+    frontend = tmp_path / "frontend" / "App.tsx"
+    for path in (backend, script, frontend):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("initial\n")
+
+    initial = source_tree_hash(tmp_path)
+    frontend.write_text("layout change\n")
+    assert source_tree_hash(tmp_path) == initial
+
+    backend.write_text("calculation change\n")
+    backend_changed = source_tree_hash(tmp_path)
+    assert backend_changed != initial
+
+    script.write_text("runner change\n")
+    assert source_tree_hash(tmp_path) != backend_changed
 
 
 def test_pipeline_lock_rejects_concurrent_writer(tmp_path: Path) -> None:

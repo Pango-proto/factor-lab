@@ -21,9 +21,9 @@ dev = ["pytest>=8,<9"]
 factor-matrix = "factor_matrix.cli:main"
 
 [tool.setuptools.packages.find]
-where = ["src-python"]
+where = ["backend"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src-python", "."]
+pythonpath = ["backend", "."]
 markers = ["local_data: verifies excluded real local data/evidence; run in the data-owning workspace"]

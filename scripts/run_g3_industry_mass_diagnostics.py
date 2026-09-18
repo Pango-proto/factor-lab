@@ -17,7 +17,7 @@ import polars as pl
 
 
 PROJECT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PROJECT / "src-python"))
+sys.path.insert(0, str(PROJECT / "backend"))
 
 from factor_matrix.storage import file_sha256, json_hash  # noqa: E402
 

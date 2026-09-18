@@ -183,10 +183,10 @@ archive_old_diagnostics_if_needed() {
   echo "生成时间: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
   echo
   echo "## 1) 开发核心（建议优先阅读）"
-  echo "目录: src, src-python, scripts, config, tests"
+  echo "目录: frontend, backend, scripts, config, tests"
   echo
   {
-    rg --files src src-python scripts config tests
+    rg --files frontend backend scripts config tests
     find . -maxdepth 1 -type f -name "*.md" -print
   } | sed 's|^\./||' | sort -u
   echo
@@ -246,7 +246,7 @@ echo "已更新: $DATA_POLICY_FILE"
   if [[ "$DO_CLEAN" == "1" ]]; then
   echo "开始清理上下文噪声文件..."
   # Python/测试缓存（可安全重建）
-  for d in src-python scripts tests; do
+  for d in backend scripts tests; do
     if [ -d "$d" ]; then
       find "$d" -type d -name "__pycache__" -prune -exec rm -rf {} +
       find "$d" -type f -name "*.pyc" -delete

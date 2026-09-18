@@ -3,9 +3,10 @@
 
 整理原则
 --------
-保持现有运行目录不变，避免破坏配置中的路径、历史工件哈希和研究证据链。
-通过目录职责说明、Git 忽略规则和独立实验工作目录分离源码与过程文件。
-本轮不删除或搬移本地历史产物，不调整研究参数或现有准入状态。
+前端源码放在 frontend/，Python 后端源码放在 backend/factor_matrix/，从目录名即可区分职责。
+前后端的启动入口、包配置和依赖锁文件保留在仓库根目录，日常命令也在根目录执行。
+数据、报告及历史产物保留原路径，通过 Git 忽略规则和独立实验工作目录与源码分开管理。
+源码路径及相关配置的变化可能改变新运行的哈希标识；历史审计记录不回写，复现时使用对应代码版本。
 
 上传 GitHub 的目录
 ------------------
@@ -17,7 +18,7 @@ ops/                           运维配置模板；实际安装使用的机器�
 public/                        前端静态资源入口；demo-backtest/ 下的生成物不上传。
 scripts/                       环境初始化、开发启动、数据检查、维护及旧任务兼容入口。
                                新业务计算进入后端 service；脚本不串联其他业务脚本。
-src/                           React / TypeScript 前端，只展示和交互，不重算研究结论。
+frontend/                      React / TypeScript 前端，只展示和交互，不重算研究结论。
   components/                  页面与共享 UI。
     pages/                     数据管道、因子及研究页面。
     backtest/                  账户曲线、成交与风险/合成路径展示。
@@ -28,7 +29,7 @@ src/                           React / TypeScript 前端，只展示和交互，
   features/                    按研究、评分领域拆分的前端状态和逻辑。
     research/                  研究界面相关逻辑。
     scoring/                   评分界面相关逻辑。
-src-python/factor_matrix/      Python 后端包；cli.py / cli_parser.py 提供正式命令入口。
+backend/factor_matrix/          Python 后端包；cli.py / cli_parser.py 提供正式命令入口。
                                根模块负责数据接入、标准化、存储、质量、版本读取与 API。
   calculation/                 正式计算与编排。
     core/                      执行器、端口、插件和层间契约。
@@ -51,7 +52,7 @@ experiments/                    独立研究分支上的实验说明与执行边
 
 根目录文件
 ----------
-README.txt                     仓库入口与安装、验证说明。
+README.md                      仓库入口与安装、验证说明。
 pyproject.toml / uv.lock        Python 包配置和主环境依赖锁。
 requirements-dev.lock          已有开发依赖锁；标准安装以 uv.lock 为准。
 package.json / package-lock.json 前端依赖和 npm 命令。
@@ -75,7 +76,7 @@ dist/                          前端构建结果。
 node_modules/                  下载的前端依赖。
 .venv/、.uv-cache/              本地 Python 环境和安装缓存。
 .pytest_cache/、__pycache__/    测试与 Python 字节码缓存。
-*.md / *.markdown              所有 Markdown 文档，本轮暂不上传，原路径保留。
+*.md / *.markdown              除根目录 README.md 外的 Markdown 文档不上传，原路径保留。
 *.log / *.tmp / *.bak           运行日志、临时和备份文件。
 .env*、*.token、*.secret、本地凭据模块 真实凭据（.env.example 除外）。
 ops/*.plist                    当前机器实际使用的定时任务配置。

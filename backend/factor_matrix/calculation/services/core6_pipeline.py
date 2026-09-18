@@ -43,11 +43,11 @@ def run_core6_current(*, project_root: Path, gate_path: Path, gate_sha256: str, 
     listing_path = project_root/'config/new_listing_policy_v1.json'
     d0 = json.loads(listing_path.read_text())['d0_model_exclusion']['value']
     files = [Path(__file__), Path(__file__).with_name('core6_inputs.py'), Path(__file__).with_name('core6_model.py'),
-        project_root/'src-python/factor_matrix/calculation/l1/momentum.py',
-        project_root/'src-python/factor_matrix/calculation/l1/descriptors.py',
-        project_root/'src-python/factor_matrix/calculation/l1/builder.py',
-        project_root/'src-python/factor_matrix/calculation/l1/style_math.py',
-        project_root/'src-python/factor_matrix/calculation/l2/risk_modeling.py']
+        project_root/'backend/factor_matrix/calculation/l1/momentum.py',
+        project_root/'backend/factor_matrix/calculation/l1/descriptors.py',
+        project_root/'backend/factor_matrix/calculation/l1/builder.py',
+        project_root/'backend/factor_matrix/calculation/l1/style_math.py',
+        project_root/'backend/factor_matrix/calculation/l2/risk_modeling.py']
     identity = {'design_sha256':file_sha256(design_path),'data_gate_sha256':gate_sha256,
         'source_records': inputs['source_records'], 'inherited_parameters_sha256':file_sha256(inherited_path),
         'weight_contract':contract.as_identity(),'universe_policy_sha256':file_sha256(policy_path),

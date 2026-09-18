@@ -59,6 +59,13 @@ def load_risk_factor_set(path: Path, registry: FactorRegistry) -> RiskFactorSetS
         purpose=payload.get("purpose", "production_baseline"),
         parent_version=payload.get("parent_version"),
         expansion_manifest_sha=payload.get("expansion_manifest_sha"),
+        risk_basis_id=payload.get('risk_basis_id'),
+        basis_acceptance_status=payload.get('basis_acceptance_status','unknown'),
+        covariance_acceptance_status=payload.get('covariance_acceptance_status','unknown'),
+        pit_acceptance_status=payload.get('pit_acceptance_status','unknown'),
+        basis_evidence=payload.get('basis_evidence'),
+        covariance_evidence=payload.get('covariance_evidence'),
+        pit_evidence=payload.get('pit_evidence'),
     )
     for member in result.members:
         spec = registry.get(member.factor_id, member.factor_version).spec

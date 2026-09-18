@@ -1,0 +1,49 @@
+{
+  "schema_version": 2,
+  "protocol_id": "core6_risk_admission_v2",
+  "status": "approved",
+  "approval": {
+    "path": "config/core6_admission_v2_approval.json",
+    "sha256": "330e33d01053aaecbc0b18bf98f383cd22d62c0e918388976950b7b47798fe22"
+  },
+  "statistic": "std(realized_return/sqrt(predicted_variance),ddof=1)",
+  "generic": {
+    "axis": "overall",
+    "lower": 0.95,
+    "upper": 1.05,
+    "minimum_dates": 60
+  },
+  "stratified": {
+    "axes": [
+      "overall",
+      "liquidity_decile",
+      "predicted_specific_risk_decile"
+    ],
+    "lower": 0.91,
+    "upper": 1.09,
+    "window_sessions": 250,
+    "minimum_dates": 250,
+    "risk_decile_reference": "each_models_own_cutoff_Delta",
+    "high_risk_group": 10,
+    "hard_stop_above": 1.2
+  },
+  "combination": "generic_AND_all_complete_stratified_windows;missing_window_blocks;observed_failure_retained",
+  "portfolio_weighting": "equal_weight_cutoff_eligible_each_model",
+  "portfolio_variance": "b_F_b_plus_sum_w_squared_Delta",
+  "reassessment_mode": "retrospective_after_protocol_amendment_not_new_blind_validation",
+  "data_changed": false,
+  "current_changed": false,
+  "holdout_start": "2025-03-01",
+  "parent_calibration": {
+    "path": "data/diagnostics/core6_calibration_v1/run_id=core6_calibration_ec612f1bd616db65/_MANIFEST.json",
+    "sha256": "28746e261dcab5a07e9fa4d109ffd9caac3a5db773054ccea9d3a8481de754da"
+  },
+  "release_requires": [
+    "basis_acceptance_passed",
+    "covariance_acceptance_passed",
+    "independent_residual_gate_passed",
+    "verified_real_pit",
+    "explicit_publication"
+  ],
+  "bounds_relaxation_allowed": false
+}

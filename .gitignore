@@ -11,9 +11,10 @@
 *.tsbuildinfo
 .coverage
 
-# Markdown documents stay local for this initial publication
+# Markdown documents stay local, except the repository README
 *.[mM][dD]
 *.[mM][aA][rR][kK][dD][oO][wW][nN]
+!/README.md
 
 # Dependencies, caches and local worktrees
 node_modules/
@@ -36,7 +37,7 @@ __pycache__/
 *.secret
 *.pem
 *.key
-src-python/factor_matrix/_local_secrets.py
+backend/factor_matrix/_local_secrets.py
 /ops/*.plist
 /experiments/*/runtime.local.json
 .codex/

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { scaleX, niceTicks } from '../src/components/backtest/chartGeometry.ts'
+import { scaleX, niceTicks } from '../frontend/components/backtest/chartGeometry.ts'
 
 test('fractional return domain spans the full plot, not one unit',()=>{
  assert.equal(scaleX(-.06,-.06,.06,68,874),68)

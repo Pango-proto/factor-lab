@@ -169,7 +169,7 @@
       "beta"
     ],
     "cross_sectional_transform": "inherit_v1_after_raw_coverage_audit",
-    "implementation": "src-python/factor_matrix/calculation/l1/momentum.py",
+    "implementation": "backend/factor_matrix/calculation/l1/momentum.py",
     "availability_policy": "explicit_timezone_aware_available_at_backed_by_observed_or_conservative_first_seen",
     "historical_probe_policy": "retain_existing_probe_and_costs; no_implicit_role_migration_or_zero_attempt_claim"
   },

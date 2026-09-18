@@ -42,8 +42,17 @@ class RiskFactorSetSpec:
     purpose: str = "production_baseline"
     parent_version: int | None = None
     expansion_manifest_sha: str | None = None
+    risk_basis_id: str | None = None
+    basis_acceptance_status: str = 'unknown'
+    covariance_acceptance_status: str = 'unknown'
+    pit_acceptance_status: str = 'unknown'
+    basis_evidence: dict | None = None
+    covariance_evidence: dict | None = None
+    pit_evidence: dict | None = None
 
     def __post_init__(self) -> None:
+        from .acceptance import acceptance_from_mapping
+        acceptance_from_mapping(vars(self))
         if self.risk_set_version < 1:
             raise ValueError("RISK_SET_VERSION_INVALID")
         if self.status not in {"candidate", "frozen", "retired"}:

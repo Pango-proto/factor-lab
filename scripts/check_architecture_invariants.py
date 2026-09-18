@@ -96,7 +96,7 @@ def orchestration_violations(project: Path = PROJECT) -> list[str]:
 
 def violations(project: Path = PROJECT) -> list[str]:
     found: list[str] = orchestration_violations(project)
-    calculation = project / "src-python" / "factor_matrix" / "calculation"
+    calculation = project / "backend" / "factor_matrix" / "calculation"
     forbidden_text = {
         "float_share *": "raw float market-cap reconstruction",
         'maximum_condition_number": 1000': "hard-coded condition threshold",
@@ -111,7 +111,7 @@ def violations(project: Path = PROJECT) -> list[str]:
                 found.append(f"{path.relative_to(project)}: {reason}")
 
     canonical_text = (
-        project / "src-python" / "factor_matrix" / "canonical_definitions.py"
+        project / "backend" / "factor_matrix" / "canonical_definitions.py"
     ).read_text(encoding="utf-8")
     for symbol in ("REGRESSION_BASE_WEIGHT", "EXPOSURE_ORTHOGONALIZATION_WEIGHT"):
         if symbol not in canonical_text:
@@ -140,11 +140,11 @@ def violations(project: Path = PROJECT) -> list[str]:
     if "horizon_days" in protocol["targets"]:
         found.append("evaluation horizon appears in derivable targets")
 
-    legacy_pipeline = project / "src-python" / "factor_matrix" / "pipeline.py"
+    legacy_pipeline = project / "backend" / "factor_matrix" / "pipeline.py"
     if legacy_pipeline.exists():
         found.append("legacy mutable MarketPipeline module still exists")
     legacy_risk_plugins = (
-        project / "src-python" / "factor_matrix" / "factor_engine" / "plugins"
+        project / "backend" / "factor_matrix" / "factor_engine" / "plugins"
         / "risk_candidates.py"
     )
     if legacy_risk_plugins.exists():
@@ -167,7 +167,7 @@ def violations(project: Path = PROJECT) -> list[str]:
         found.append("L2b event-return exclusions are not frozen")
 
     store_text = (
-        project / "src-python" / "factor_matrix" / "factor_engine" / "store.py"
+        project / "backend" / "factor_matrix" / "factor_engine" / "store.py"
     ).read_text(encoding="utf-8")
     required_registry_tokens = {
         "CREATE TABLE IF NOT EXISTS risk_set": "risk_set header table missing",
@@ -185,7 +185,7 @@ def violations(project: Path = PROJECT) -> list[str]:
     if "m.feature_version = NEW.feature_version" in store_text:
         found.append("self-neutralization scope incorrectly includes feature_version")
     research_log_text = (
-        project / "src-python" / "factor_matrix" / "calculation" / "l2" / "research_log.py"
+        project / "backend" / "factor_matrix" / "calculation" / "l2" / "research_log.py"
     ).read_text(encoding="utf-8")
     if "attempt_id" not in research_log_text:
         found.append("L2a research event is not bound to attempt_id")
@@ -255,8 +255,8 @@ def violations(project: Path = PROJECT) -> list[str]:
     ):
         found.append("diagnostic day sample is not frozen as a paired selection sample")
 
-    cli_text = (project / "src-python" / "factor_matrix" / "cli.py").read_text(encoding="utf-8")
-    parser_text = (project / "src-python" / "factor_matrix" / "cli_parser.py").read_text(
+    cli_text = (project / "backend" / "factor_matrix" / "cli.py").read_text(encoding="utf-8")
+    parser_text = (project / "backend" / "factor_matrix" / "cli_parser.py").read_text(
         encoding="utf-8"
     )
     for command in ("sync-market", "backfill-market", "sync-price-limits", "matrix-build"):
@@ -267,7 +267,7 @@ def violations(project: Path = PROJECT) -> list[str]:
         "factor_data.py", "concepts.py", "benchmark_membership.py",
     )
     for name in l0_modules:
-        path = project / "src-python" / "factor_matrix" / name
+        path = project / "backend" / "factor_matrix" / name
         text = path.read_text(encoding="utf-8")
         if any(
             needle in text

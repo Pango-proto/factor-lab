@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "approval_id": "core6_admission_v2_approval",
+  "status": "approved",
+  "user_instruction": "同意按照该方案实施",
+  "proposal_path": "CORE6_FREEZE_AUDIT_AND_AMENDMENT_20260918.md",
+  "proposal_sha256": "32b783e289d8cf8fdf71c297430b0e7135ff8f228d0e54ae7b06328d33d1a173",
+  "scope": [
+    "parallel_risk_acceptance_criteria",
+    "G6a_G6b_state_split",
+    "retrospective_native_strata_reevaluation"
+  ],
+  "production_promotion_authorized": false,
+  "holdout_opening_authorized": false
+}

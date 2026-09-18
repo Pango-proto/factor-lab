@@ -4,7 +4,7 @@
   "registered_at": "2026-08-16",
   "current_status": "not_supported_block_variable_factor_set",
   "implementation_evidence": {
-    "path": "src-python/factor_matrix/calculation/l2/risk_modeling.py",
+    "path": "backend/factor_matrix/calculation/l2/risk_modeling.py",
     "function": "ewma_factor_covariance",
     "requires_equal_length_factor_axes": true,
     "pairwise_available_observations": false,

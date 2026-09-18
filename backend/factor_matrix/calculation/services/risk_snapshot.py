@@ -11,6 +11,7 @@ import json
 import numpy as np
 from ...storage import DataLake, file_sha256, json_hash, source_tree_hash
 from ..l2.risk_modeling import ewma_factor_covariance, ewma_specific_variance, bias_test
+from ...risk_model.acceptance import acceptance_from_mapping
 
 VERSION='risk_snapshot_v1'
 
@@ -36,12 +37,13 @@ def finite(values, shape=None):
 def identity(x, estimator):
     return {'risk_basis_id':x['risk_basis_id'],'risk_set_version':x['risk_set_version'],
         'risk_factor_set_status':x['risk_factor_set_status'],'factor_ids':x['factor_ids'],
-        'asset_ids':x['asset_ids'],'estimator':estimator,'horizon_sessions':1}
+        'asset_ids':x['asset_ids'],'estimator':estimator,'horizon_sessions':1,
+        'acceptance':x.get('acceptance',{})}
 
 
 def exposure_snapshot(*, asset_ids, factor_ids, values, risk_basis_id, risk_set_version,
                       risk_factor_set_status, valid_at, available_at, decision_time,
-                      expected_valid_at, parent_run_ids, purpose):
+                      expected_valid_at, parent_run_ids, purpose, acceptance=None):
     assets,factors=axis(asset_ids),axis(factor_ids)
     if purpose not in ('engineering_fixture_only','research_diagnostic','production'):
         raise ValueError('RISK_PURPOSE_INVALID')
@@ -50,12 +52,16 @@ def exposure_snapshot(*, asset_ids, factor_ids, values, risk_basis_id, risk_set_
     if time(valid_at)!=time(expected_valid_at):raise ValueError('RISK_STALE_EXPOSURE')
     if not time(valid_at)<=time(available_at)<=time(decision_time):raise ValueError('RISK_EXPOSURE_NOT_AVAILABLE')
     X=finite(values,(len(assets),len(factors)))
+    admission=acceptance_from_mapping(acceptance or {'risk_set_version':risk_set_version,'risk_basis_id':risk_basis_id})
+    if admission.risk_set_version!=risk_set_version or admission.risk_basis_id!=risk_basis_id:
+        raise ValueError('RISK_ACCEPTANCE_EXPOSURE_IDENTITY')
     if 'risk_size' not in factors or not any(f.startswith('risk_industry_') for f in factors):
         raise ValueError('RISK_SIZE_AND_INDUSTRY_REQUIRED')
     result={'schema_version':1,'kind':'RiskExposureSnapshot','asset_ids':assets,'factor_ids':factors,'X':X.tolist(),
         'risk_basis_id':risk_basis_id,'risk_set_version':risk_set_version,'risk_factor_set_status':risk_factor_set_status,
         'valid_at':valid_at,'available_at':available_at,'decision_time':decision_time,
-        'parent_run_ids':parent_run_ids,'purpose':purpose,'quality':{'status':'passed','coverage':1.}}
+        'parent_run_ids':parent_run_ids,'purpose':purpose,'quality':{'status':'passed','coverage':1.},
+        'acceptance':asdict(admission),'basis_consumption_allowed':admission.basis_consumption_allowed}
     result['snapshot_id']='risk_x_'+json_hash(result)[:16]
     return result
 
@@ -121,6 +127,7 @@ def portfolio_risk(exposure, forecast, weights, *, decision_time, horizon_sessio
     for key in ('risk_basis_id','risk_set_version','risk_factor_set_status','asset_ids','factor_ids'):
         if forecast[key]!=exposure[key]:raise ValueError('RISK_SNAPSHOT_AXIS_OR_BASIS_MISMATCH')
     if forecast['exposure_snapshot_id']!=exposure['snapshot_id']:raise ValueError('RISK_SNAPSHOT_PAIR_MISMATCH')
+    if forecast.get('acceptance',{})!=exposure.get('acceptance',{}):raise ValueError('RISK_ACCEPTANCE_PAIR_MISMATCH')
     if forecast['horizon_sessions']!=horizon_sessions:raise ValueError('RISK_HORIZON_MISMATCH')
     if any(time(s['available_at'])>time(decision_time) for s in (exposure,forecast)):
         raise ValueError('RISK_SNAPSHOT_NOT_AVAILABLE')
@@ -177,6 +184,11 @@ def admit_target(exposure, forecast, weights, *, decision_time, exposure_limits,
     else:
         # v1 cannot issue a production permit: current basis lacks freeze evidence.
         reasons.append('RISK_PRODUCTION_RELEASE_NOT_APPROVED')
+        state=acceptance_from_mapping(forecast.get('acceptance') or {
+            'risk_set_version':forecast['risk_set_version'],'risk_basis_id':forecast['risk_basis_id']})
+        if not state.basis_consumption_allowed:reasons.append('RISK_BASIS_NOT_ACCEPTED')
+        if state.covariance_acceptance_status!='passed':reasons.append('RISK_COVARIANCE_NOT_ACCEPTED')
+        if state.pit_acceptance_status!='passed':reasons.append('RISK_REAL_PIT_NOT_VERIFIED')
         if forecast['calibration_status']!='passed':reasons.append('RISK_NOT_CALIBRATED')
         if forecast['risk_factor_set_status']!='frozen':reasons.append('RISK_SET_NOT_FROZEN')
     if not exposure_limits:raise ValueError('RISK_EXPLICIT_LIMITS_REQUIRED')

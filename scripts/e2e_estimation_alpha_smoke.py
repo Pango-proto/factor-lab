@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Standalone estimation-only alpha vertical-slice smoke test.
 
-This file is deliberately outside ``src-python/factor_matrix`` and is not
+This file is deliberately outside ``backend/factor_matrix`` and is not
 imported by production code.  It reads existing parquet files only and does
 not touch the registry, attempt ledger, manifests, or any ``_CURRENT`` file.
 

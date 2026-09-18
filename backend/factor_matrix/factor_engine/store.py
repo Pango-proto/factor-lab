@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 
 from .registry import FactorRegistry
 from .contracts import FactorRole, FactorSpec
+from ..risk_model.acceptance import ensure_acceptance_schema, registry_acceptance, acceptance_from_mapping
 
 if TYPE_CHECKING:
     from ..risk_model import RiskFactorSetSpec
@@ -312,6 +313,7 @@ class FactorRegistryStore:
             self._ensure_risk_set_columns(connection)
             self._ensure_family_declaration_columns(connection)
             self._ensure_structural_schema(connection)
+            ensure_acceptance_schema(connection)
 
     @staticmethod
     def _archive_legacy_factor_table(connection: sqlite3.Connection) -> None:
@@ -717,13 +719,7 @@ class FactorRegistryStore:
                 (feature_id, feature_version),
             ).fetchone()[0]:
                 raise ValueError("RESEARCH_ATTEMPT_FEATURE_NOT_REGISTERED")
-            if not connection.execute(
-                """SELECT EXISTS(
-                     SELECT 1 FROM risk_set
-                     WHERE risk_set_version=? AND status='frozen'
-                   )""",
-                (risk_set_version,),
-            ).fetchone()[0]:
+            if not registry_acceptance(connection, risk_set_version).basis_consumption_allowed:
                 raise ValueError("RESEARCH_ATTEMPT_RISK_SET_NOT_FROZEN")
             connection.execute(
                 """INSERT INTO research_attempt(
@@ -838,7 +834,7 @@ class FactorRegistryStore:
         ).fetchone()
         if header is None:
             raise ValueError("ALPHA_ASSERTION_RISK_SET_UNKNOWN")
-        if header[0] != "frozen":
+        if not registry_acceptance(connection, spec.risk_set_version).basis_consumption_allowed:
             raise ValueError("ALPHA_ASSERTION_RISK_SET_NOT_FROZEN")
         neutralized = set(spec.neutralize_against or ())
         rows = connection.execute(
@@ -847,7 +843,7 @@ class FactorRegistryStore:
         ).fetchall()
         if not rows:
             raise ValueError("ALPHA_ASSERTION_RISK_SET_UNKNOWN")
-        if any(status != "frozen" for _, status in rows):
+        if any(status not in ("frozen", "candidate") for _, status in rows):
             raise ValueError("ALPHA_ASSERTION_RISK_SET_NOT_FROZEN")
         risk_factor_ids = {feature_id for feature_id, _ in rows}
         if not neutralized <= risk_factor_ids:
@@ -1062,6 +1058,7 @@ class FactorRegistryStore:
         self, factor_set: "RiskFactorSetSpec", registry: FactorRegistry | None = None,
     ) -> None:
         """Materialize a versioned risk set without deleting membership history."""
+        acceptance = acceptance_from_mapping(vars(factor_set))
         self.initialize()
         if registry is None:
             registry = FactorRegistry.discover()
@@ -1087,7 +1084,7 @@ class FactorRegistryStore:
             parent_version = getattr(factor_set, "parent_version", None)
             if purpose not in {"production_baseline", "holdout_validation", "research"}:
                 raise ValueError("RISK_SET_PURPOSE_INVALID")
-            if existing and existing[0] == "frozen":
+            if existing and (existing[0] == "frozen" or registry_acceptance(connection, factor_set.risk_set_version).basis_consumption_allowed):
                 current = {
                     (row[0], row[1]) for row in connection.execute(
                         """SELECT feature_id,feature_version FROM risk_set_member
@@ -1100,6 +1097,9 @@ class FactorRegistryStore:
                 }
                 if current != requested:
                     raise ValueError("FROZEN_RISK_SET_MEMBERSHIP_IMMUTABLE")
+                old_acceptance = registry_acceptance(connection, factor_set.risk_set_version)
+                if acceptance != old_acceptance:
+                    raise ValueError('RISK_ACCEPTANCE_UPDATE_REQUIRES_EXPLICIT_EVIDENCE_API')
                 return
             connection.execute(
                 """INSERT INTO risk_set(
@@ -1187,6 +1187,32 @@ class FactorRegistryStore:
                        ) VALUES (?,?,?,'basis','active',?,?)""",
                     (member.factor_id, member.factor_version, factor_set.risk_set_version,
                      "Explicit risk_set_member assignment.",
-                     factor_set.frozen_at.isoformat() if factor_set.frozen_at else "1970-01-01"),
+                    factor_set.frozen_at.isoformat() if factor_set.frozen_at else "1970-01-01"),
                 )
+            connection.execute("""UPDATE risk_set SET risk_basis_id=?,
+              basis_acceptance_status=?,covariance_acceptance_status=?,pit_acceptance_status=?,
+              basis_evidence_json=?,covariance_evidence_json=?,pit_evidence_json=? WHERE risk_set_version=?""",
+              (acceptance.risk_basis_id,acceptance.basis_acceptance_status,acceptance.covariance_acceptance_status,
+               acceptance.pit_acceptance_status,json.dumps(acceptance.basis_evidence),json.dumps(acceptance.covariance_evidence),
+               json.dumps(acceptance.pit_evidence),factor_set.risk_set_version))
 
+    def record_risk_acceptance(self, state) -> None:
+        """Certify stages against a registered, matching basis; never change membership."""
+        state = acceptance_from_mapping(vars(state))
+        self.initialize()
+        with sqlite3.connect(self.path) as connection:
+            row = connection.execute('SELECT risk_basis_id,status FROM risk_set WHERE risk_set_version=?',
+                                     (state.risk_set_version,)).fetchone()
+            if row is None or row[0] != state.risk_basis_id or row[1]=='retired':
+                raise ValueError('RISK_ACCEPTANCE_REGISTRY_IDENTITY')
+            if not connection.execute('SELECT 1 FROM risk_set_member WHERE risk_set_version=?',
+                                      (state.risk_set_version,)).fetchone():
+                raise ValueError('RISK_ACCEPTANCE_MEMBERS_REQUIRED')
+            old = registry_acceptance(connection,state.risk_set_version)
+            if old.basis_consumption_allowed and (state.basis_acceptance_status != 'passed' or state.basis_evidence != old.basis_evidence):
+                raise ValueError('RISK_ACCEPTED_BASIS_IMMUTABLE')
+            connection.execute("""UPDATE risk_set SET basis_acceptance_status=?,covariance_acceptance_status=?,
+              pit_acceptance_status=?,basis_evidence_json=?,covariance_evidence_json=?,pit_evidence_json=?
+              WHERE risk_set_version=?""",(state.basis_acceptance_status,state.covariance_acceptance_status,
+              state.pit_acceptance_status,json.dumps(state.basis_evidence),json.dumps(state.covariance_evidence),
+              json.dumps(state.pit_evidence),state.risk_set_version))

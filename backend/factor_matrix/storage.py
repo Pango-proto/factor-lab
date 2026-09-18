@@ -69,7 +69,7 @@ def source_tree_hash(project_root: Path | None = None) -> str:
     digest = hashlib.sha256()
     allowed_suffixes = {".py", ".ts", ".tsx", ".css", ".json", ".toml"}
     files: list[Path] = []
-    for directory in (root / "src-python", root / "scripts"):
+    for directory in (root / "backend", root / "scripts"):
         if directory.exists():
             files.extend(
                 path
