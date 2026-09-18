@@ -88,13 +88,9 @@
     "statistical_outputs_identical_after_causal_fix": true
   },
   "publication_edits": [
-    "TXT format; publication scope and portable provenance paths; complete-validation wording clarified; coverage caveats integrated; statistical results unchanged"
+    "Markdown format with embedded figures; publication scope and portable provenance paths; complete-validation wording clarified; coverage caveats integrated; statistical results unchanged"
   ],
   "outputs": {
-    "README.txt": {
-      "sha256": "6947f5b487453eba868267623c0be9eb7a1369ff2bd922047ad4a683012eedec",
-      "bytes": 8323
-    },
     "fixed_example_paths.png": {
       "sha256": "bf346aa0eb2fe951b64219472e4bd225818e93321892610ebc1444e2bb43f8f9",
       "bytes": 549236
@@ -126,6 +122,10 @@
     "verification.json": {
       "sha256": "f7ab6542bd5d97453520279b9e50024a3ed26aadba593c3a0bc7afa81afe18aa",
       "bytes": 435
+    },
+    "README.md": {
+      "sha256": "3ab2c8c00155ef7130afafa16f493a497393aab44f7b038c0a288a351d4c1b30",
+      "bytes": 8289
     }
   }
 }
