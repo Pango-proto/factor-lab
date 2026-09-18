@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g3_gate_versioning_v1",
+  "current_gate_version": "g3_condition_gate_v2",
+  "versions": {
+    "g3_condition_gate_v1": {
+      "status": "superseded",
+      "measurement_object": "raw_gram_matrix_before_scale_invariant_canonicalization",
+      "defect": "unstandardized_one_hot_columns_created_scale_dependent_condition_numbers",
+      "threshold_semantics": "same_frozen_float64_error_budget_but_measured_on_the_wrong_matrix",
+      "superseded_by": "g3_condition_gate_v2",
+      "downstream_use": "must_be_marked_superseded_and_must_not_authorize_current_or_downstream_publication"
+    },
+    "g3_condition_gate_v2": {
+      "status": "active",
+      "measurement_object": "actual_scale_invariant_canonical_constrained_solve_matrix",
+      "implementation": "full_factor_space_weighted_column_canonicalization_v1",
+      "threshold_semantics": "unchanged_from_v1",
+      "supersedes": "g3_condition_gate_v1",
+      "attestation_required": true
+    }
+  },
+  "ci_policy": {
+    "v1_reference_downstream_disposition": "superseded",
+    "active_current_requires": [
+      "gate_version=g3_condition_gate_v2",
+      "matching_gate_config_sha",
+      "passed_append_only_attestation",
+      "matching_risk_basis_id_and_l1_lineage"
+    ]
+  }
+}

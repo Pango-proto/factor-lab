@@ -1,0 +1,342 @@
+from __future__ import annotations
+
+from .contracts import ArtifactSchema, ColumnSpec
+
+
+def _column(name: str, dtype: str, role: str, unit: str = "none", nullable: bool = False):
+    return ColumnSpec(name, dtype, nullable, role, unit)
+
+
+def _schema(
+    artifact_type: str,
+    primary_key: tuple[str, ...],
+    columns: tuple[ColumnSpec, ...],
+    description: str,
+    *,
+    partitions: tuple[str, ...] = ("trade_date",),
+    dynamic: tuple[str, ...] = (),
+) -> ArtifactSchema:
+    return ArtifactSchema(
+        artifact_type=artifact_type,
+        version="1",
+        primary_key=primary_key,
+        partition_keys=tuple(key for key in partitions if key in {item.name for item in columns}),
+        columns=columns,
+        dynamic_column_prefixes=dynamic,
+        description=description,
+    )
+
+
+def architecture_artifact_schemas() -> tuple[ArtifactSchema, ...]:
+    trade = _column("trade_date", "date", "time")
+    asset = _column("asset_id", "string", "identity")
+    board = _column("board_id", "string", "scope")
+    factor = _column("factor_id", "string", "identity")
+    universe_variant = _column("universe_variant", "string", "parameter")
+    return (
+        _schema("base_matrix", ("trade_date", "asset_id"), (
+            trade, asset, board, _column("industry_id", "string", "classification", nullable=True),
+            _column("float_mkt_cap", "float64", "measure", "currency", True),
+        ), "PIT market and fundamental facts before tradability filtering", dynamic=("feature_",)),
+        _schema("tradable_universe", ("trade_date", "asset_id"), (
+            trade, asset, board,
+            _column("sw_l1_code", "string", "classification", nullable=True),
+            _column("sw_l2_code", "string", "classification", nullable=True),
+            _column("exchange_list_date", "date", "time"),
+            _column("days_since_exchange_list", "int64", "measure", "days"),
+            _column("base_tradable_without_listing_age", "boolean", "filter"),
+            _column("is_tradable", "boolean", "filter"),
+            _column("can_buy", "boolean", "filter"),
+            _column("can_sell", "boolean", "filter"),
+            _column("exclusion_reason", "string", "filter", nullable=True),
+        ), "Point-in-time tradability domain"),
+        _schema("sample_calendar", ("trade_date", "snapshot_id"), (
+            trade, _column("snapshot_id", "string", "lineage"),
+            _column("sample_role", "string", "research_integrity"),
+            _column("risk_estimation_eligible", "boolean", "filter"),
+            _column("alpha_estimation_eligible", "boolean", "filter"),
+            _column("backtest_display_eligible", "boolean", "filter"),
+            _column("stress_only", "boolean", "filter"),
+        ), "Snapshot-specific orthogonal labels for estimation, holdout, display and stress use"),
+        _schema("liquidity_facts", ("trade_date", "asset_id"), (
+            trade, asset, board, _column("adv", "float64", "liquidity", "currency"),
+            _column("spread_proxy", "float64", "liquidity", "ratio", True),
+            _column("turnover_rate", "float64", "liquidity", "ratio", True),
+            _column("limit_up", "float64", "execution", "price", True),
+            _column("limit_down", "float64", "execution", "price", True),
+        ), "Silver-derived liquidity and execution facts"),
+        _schema("realized_returns", ("trade_date", "asset_id"), (
+            trade, asset, board,
+            _column("realized_return", "float64", "measure", "return", True),
+            _column("observation_state", "string", "quality"),
+            _column("is_resumption_day", "boolean", "quality"),
+            _column("is_suspended", "boolean", "quality"),
+            _column("is_exchange_first_day", "boolean", "quality"),
+            _column("return_source", "string", "lineage", nullable=True),
+            _column("missing_return_policy", "string", "parameter", nullable=True),
+        ), "PIT realized returns over the tradable universe; suspension and "
+           "first-session state travel with the return because forward-label "
+           "construction is wrong without them"),
+        _schema("market_return_dispersion", ("trade_date",), (
+            trade, _column("n_valid", "int64", "quality", "count"),
+            _column("sigma_r", "float64", "measure", "return"),
+        ), "Daily all-A-share return dispersion without factor-model fitting"),
+        _schema("new_listing_window", ("regime_id", "board_id"), (
+            _column("regime_id", "string", "identity"), board,
+            _column("regime_start", "date", "time"),
+            _column("d_star", "int64", "derived_parameter", "days", True),
+            _column("sigma_infinity", "float64", "measure", nullable=True),
+            _column("steady_state_age_points", "int64", "quality", "count"),
+            _column("n_stocks_used", "int64", "quality", "count"),
+            _column("one_price_limit_ratio_at_d_star", "float64", "quality", "ratio", True),
+            _column("stable", "boolean", "quality"),
+            _column("fallback_days", "int64", "parameter", "days", True),
+        ), "Board-by-regime listing-age volatility decay; informs but does not select d0", partitions=()),
+        _schema("risk_exposure_matrix", ("trade_date", "asset_id", "universe_variant"), (
+            trade, asset, board, universe_variant,
+            _column("risk_factor_set_id", "string", "lineage"),
+            _column("risk_factor_set_version", "string", "lineage"),
+            _column("is_valid", "boolean", "quality"),
+        ), "Risk-only exposures built before Alpha; transforms differ by role", dynamic=("risk_",)),
+        _schema("risk_factor_set", ("risk_model_id", "version", "exposure_id"), (
+            _column("risk_model_id", "string", "identity"),
+            _column("version", "string", "identity"),
+            _column("exposure_id", "string", "identity"),
+            _column("ordered_position", "int64", "parameter"),
+            _column("orthogonalize_against", "string", "parameter", nullable=True),
+            _column("frozen_at", "date", "lineage"),
+            _column("validation_artifact_run_id", "string", "lineage"),
+        ), "Frozen risk-factor membership, order, transform and validation evidence", partitions=()),
+        _schema("exposure_matrix", ("trade_date", "asset_id", "universe_variant"), (
+            trade, asset, board, universe_variant,
+            _column("coverage_ratio", "float64", "quality", "ratio"),
+            _column("is_valid", "boolean", "quality"),
+        ), "Single exposure source for prediction, risk and attribution", dynamic=("exposure_", "is_imputed_")),
+        _schema("forward_labels", ("trade_date", "asset_id", "horizon_id"), (
+            trade, asset, _column("horizon_id", "string", "parameter"),
+            _column("target_return", "float64", "label", "return", True),
+            _column("halted_days", "int64", "quality", "count"),
+            _column("window_has_resumption", "boolean", "quality"),
+            _column("window_complete", "boolean", "quality"),
+        ), "Versioned forward-return labels on the unified market calendar; "
+           "windows touching a resumption carry no label because the gap return "
+           "is unobservable and skews one way"),
+        _schema("probe_signal_panel", ("trade_date", "asset_id", "signal_id"), (
+            trade, asset, _column("signal_id", "string", "identity"),
+            _column("signal_value", "float64", "feature", "return", True),
+        ), "Materialized registered probe signals with explicit formation lineage"),
+        _schema("factor_evaluation_panel",
+                ("trade_date", "feature_id", "horizon_days", "evaluation_variant"), (
+            trade, _column("feature_id", "string", "identity"),
+            _column("horizon_days", "int64", "parameter", "days"),
+            _column("evaluation_variant", "string", "parameter"),
+            _column("variant_class", "string", "research_integrity"),
+            _column("neutralization_mode", "string", "parameter"),
+            _column("risk_set_version", "string", "lineage"),
+            _column("attempt_id", "string", "lineage", nullable=True),
+            _column("sample_role", "string", "research_integrity"),
+            _column("holdout_touched", "boolean", "research_integrity"),
+            _column("daily_ic", "float64", "measure", "ratio", True),
+            _column("daily_rank_ic", "float64", "measure", "ratio", True),
+            _column("signal_turnover", "float64", "measure", "ratio", True),
+            _column("cross_section_count", "int64", "quality", "count"),
+            _column("n_valid", "int64", "quality", "count"),
+            _column("baseline_n_valid_ratio", "float64", "quality", "ratio", True),
+            _column("intersection_risk_size_median_delta", "float64", "quality", "measure", True),
+            _column("signal_trade_date", "date", "lineage", nullable=True),
+            _column("exposure_trade_date", "date", "lineage", nullable=True),
+            _column("n_configured", "int64", "quality", "count"),
+            _column("n_physical_retained", "int64", "quality", "count"),
+            _column("exposure_rank", "int64", "quality", "count"),
+            _column("constraint_block_rank", "int64", "quality", "count"),
+            _column("sigma_min_true_ratio", "float64", "quality", "ratio", True),
+            _column("sigma_max_noise_ratio", "float64", "quality", "ratio", True),
+            _column("rcond_used", "float64", "lineage"),
+            _column("coverage", "float64", "quality", "ratio"),
+            _column("retained_fraction", "float64", "quality", "ratio", True),
+            _column("exclusion_reason", "string", "quality", nullable=True),
+        ), "Daily L2a evaluation panel underlying factor_predictivity and "
+           "factor_evaluation_snapshot. The evaluation_variant axis carries the "
+           "baseline, negative controls and sensitivities on one lineage, so a "
+           "control can never be computed from a different panel than the result "
+           "it is meant to falsify. variant_class is gate, diagnostic or "
+           "sensitivity; only gate rows carry pass semantics downstream"),
+        _schema("factor_predictivity", ("evaluation_date", "factor_id", "horizon_days", "group_id"), (
+            _column("evaluation_date", "date", "time"), factor,
+            _column("horizon_days", "int64", "parameter"),
+            _column("group_id", "string", "preregistered_group"),
+            _column("rolling_ic", "float64", "prediction", nullable=True),
+            _column("shrunk_ic", "float64", "prediction", nullable=True),
+            _column("standard_error", "float64", "uncertainty", nullable=True),
+            _column("confidence_low", "float64", "uncertainty", nullable=True),
+            _column("confidence_high", "float64", "uncertainty", nullable=True),
+            _column("half_life_days", "float64", "prediction", "days", True),
+            _column("factor_weight", "float64", "prediction", nullable=True),
+            _column("status_signal", "string", "quality"),
+            _column("training_end_date", "date", "lineage", nullable=True),
+            _column("fdr_m", "int64", "research_integrity", "count"),
+            _column("raw_shrunk_ic", "float64", "prediction", nullable=True),
+            _column("neutralized_shrunk_ic", "float64", "prediction", nullable=True),
+            _column("absolute_ic_retention_ratio", "float64", "quality", "ratio", True),
+            _column("neutralization_fidelity_status", "string", "quality", nullable=True),
+            _column("incremental_shrunk_ic", "float64", "prediction", nullable=True),
+            _column("incremental_standard_error", "float64", "uncertainty", nullable=True),
+        ), "Rolling out-of-sample IC term structure with uncertainty and FDR accounting", partitions=()),
+        _schema("fm_regression", ("evaluation_date", "factor_id", "horizon_days"), (
+            _column("evaluation_date", "date", "time"), factor,
+            _column("horizon_days", "int64", "parameter"),
+            _column("coefficient", "float64", "prediction", nullable=True),
+            _column("standard_error", "float64", "uncertainty", nullable=True),
+            _column("nw_t_value", "float64", "uncertainty", nullable=True),
+            _column("training_end_date", "date", "lineage", nullable=True),
+        ), "Rolling out-of-sample Fama-MacBeth coefficient estimates", partitions=()),
+        _schema("factor_evaluation_snapshot", ("snapshot_id", "factor_id"), (
+            _column("snapshot_id", "string", "identity"), factor,
+            _column("frozen_date", "date", "lineage"),
+            _column("data_end_date", "date", "lineage"),
+            _column("config_sha", "string", "lineage"),
+            _column("status", "string", "quality"),
+            _column("fdr_m", "int64", "research_integrity", "count"),
+            _column("touched_holdout", "boolean", "research_integrity"),
+        ), "Immutable low-frequency L2a snapshot; the only predictivity object exposed to UI", partitions=()),
+        _schema("factor_returns", ("trade_date", "factor_id", "regression_mode"), (
+            trade, factor, _column("regression_mode", "string", "parameter"),
+            _column("factor_family", "string", "role"),
+            _column("factor_return", "float64", "measure", "return", True),
+        ), "Daily constrained-WLS returns; mode is risk_only or risk_plus_alpha"),
+        _schema("specific_returns", ("trade_date", "asset_id", "regression_mode"), (
+            trade, asset, _column("regression_mode", "string", "parameter"),
+            _column("specific_return", "float64", "measure", "return", True),
+            _column("in_estimation_domain", "boolean", "quality"),
+            _column("exclusion_reason", "string", "quality", nullable=True),
+            _column("estimation_weight", "float64", "quality", nullable=True),
+            _column("huber_weight_multiplier", "float64", "quality", nullable=True),
+            _column("is_outlier_flagged", "boolean", "quality"),
+        ), "Daily asset-specific returns keyed by the explicit L2b run mode"),
+        _schema("factor_regression_quality", ("trade_date", "regression_mode"), (
+            trade, _column("regression_mode", "string", "parameter"),
+            _column("status", "string", "quality"),
+            _column("sample_count", "int64", "quality", "count"),
+            _column("label_sample_count", "int64", "quality", "count"),
+            _column("estimation_excluded_count", "int64", "quality", "count"),
+            _column("excluded_count", "int64", "quality", "count"),
+            _column("factor_count", "int64", "quality", "count"),
+            _column("constraint_count", "int64", "quality", "count"),
+            _column("expected_matrix_rank", "int64", "quality", "count"),
+            _column("constraint_identification_passed", "boolean", "quality"),
+            _column("matrix_rank", "int64", "quality", "count"),
+            _column("condition_number", "float64", "quality"),
+            _column("r_squared", "float64", "quality", "ratio"),
+            _column("full_label_r_squared", "float64", "quality", "ratio"),
+            _column("base_weight_alpha_risk_cross_gram_max", "float64", "quality", "ratio", True),
+            _column("effective_weight_alpha_risk_cross_gram_max", "float64", "quality", "ratio", True),
+            _column("estimation_domain_r_squared", "float64", "quality", "ratio"),
+            _column("full_label_unweighted_r_squared", "float64", "quality", "ratio"),
+            _column("estimation_domain_unweighted_r_squared", "float64", "quality", "ratio"),
+            _column("huber_downweight_count", "int64", "quality", "count"),
+            _column("huber_downweight_rate", "float64", "quality", "ratio"),
+            _column("r_squared_in_expected_range", "boolean", "quality"),
+            _column("constraint_error", "float64", "quality", nullable=True),
+            _column("regression_identity_error", "float64", "quality", nullable=True),
+            _column("maximum_group_residual_correlation", "float64", "quality", nullable=True),
+        ), "Daily numerical quality; invalid dates are excluded downstream"),
+        _schema("cross_section_stats", ("trade_date", "board_id", "regression_mode"), (
+            trade, board, _column("regression_mode", "string", "parameter"),
+            _column("sigma_r", "float64", "measure", "return"),
+            _column("n_valid", "int64", "quality", "count"),
+            _column("mean_abs_return", "float64", "measure", "return"),
+            _column("skew", "float64", "measure"),
+            _column("kurtosis", "float64", "measure"),
+        ), "L2b daily return distribution statistics consumed by L3 without raw labels"),
+        _schema("factor_covariance", ("trade_date", "row_factor_id", "column_factor_id"), (
+            trade, _column("row_factor_id", "string", "identity"),
+            _column("column_factor_id", "string", "identity"),
+            _column("covariance", "float64", "risk", "return_squared"),
+        ), "Factor covariance matrix"),
+        _schema("specific_risk", ("trade_date", "asset_id"), (
+            trade, asset, _column("specific_variance", "float64", "risk", "return_squared"),
+        ), "Asset-specific risk estimates"),
+        _schema("security_covariance", ("trade_date", "row_asset_id", "column_asset_id"), (
+            trade, _column("row_asset_id", "string", "identity"),
+            _column("column_asset_id", "string", "identity"),
+            _column("covariance", "float64", "risk", "return_squared"),
+        ), "Security covariance matrix"),
+        _schema("bias_test_report", ("evaluation_date", "risk_set_version", "portfolio_bucket"), (
+            _column("evaluation_date", "date", "time"),
+            _column("risk_set_version", "int64", "lineage"),
+            _column("portfolio_bucket", "string", "identity"),
+            _column("standardized_return_std", "float64", "quality"),
+            _column("lower_bound", "float64", "parameter"),
+            _column("upper_bound", "float64", "parameter"),
+            _column("passed", "boolean", "quality"),
+        ), "L2c calibration test over published F and Delta", partitions=()),
+        _schema("residual_correlation_report", ("evaluation_date", "group_dimension", "group_id"), (
+            _column("evaluation_date", "date", "time"),
+            _column("group_dimension", "string", "identity"),
+            _column("group_id", "string", "identity"),
+            _column("window_days", "int64", "parameter", "days"),
+            _column("mean_residual_correlation", "float64", "quality"),
+            _column("permutation_p_value", "float64", "quality"),
+            _column("bh_passed", "boolean", "quality"),
+            _column("decision", "string", "quality"),
+        ), "Stratified permutation test for omitted common residual structure", partitions=()),
+        _schema("cross_chain_validation", ("evaluation_date", "factor_id"), (
+            _column("evaluation_date", "date", "time"), factor,
+            _column("gamma_per_day", "float64", "validation", "return"),
+            _column("mean_alpha_factor_return", "float64", "validation", "return"),
+            _column("magnitude_ratio", "float64", "validation"),
+            _column("passed", "boolean", "quality"),
+        ), "Read-only L2 validator output; never feeds either executor", partitions=()),
+        _schema("alpha_forecast", ("trade_date", "asset_id"), (
+            trade, asset, board, _column("alpha_raw", "float64", "alpha", "return"),
+            _column("alpha_ci_low", "float64", "uncertainty", "return", True),
+            _column("alpha_ci_high", "float64", "uncertainty", "return", True),
+        ), "Dimensional expected-return forecast", dynamic=("contrib_",)),
+        _schema("cost_estimate", ("trade_date", "asset_id", "portfolio_size_id"), (
+            trade, asset, board, _column("portfolio_size_id", "string", "parameter"),
+            _column("roundtrip_cost", "float64", "cost", "return"),
+            _column("days_to_build", "float64", "capacity", "days"),
+        ), "Versioned transaction-cost and capacity estimates", dynamic=("cost_component_",)),
+        _schema("stock_score", ("trade_date", "asset_id", "portfolio_size_id"), (
+            trade, asset, board, _column("portfolio_size_id", "string", "parameter"),
+            _column("alpha_raw", "float64", "alpha", "return"),
+            _column("alpha_net", "float64", "alpha", "return"),
+            _column("display_score", "float64", "display", "percentile"),
+            _column("rank_signal", "int64", "rank", "ordinal"),
+            _column("rank_risk_adjusted", "int64", "rank", "ordinal", True),
+            _column("rank_portfolio", "int64", "rank", "ordinal", True),
+        ), "Scoring product; display score is never a calculation input", dynamic=("contrib_", "rank_lag_")),
+        _schema("score_panel_daily", ("trade_date", "board_id", "portfolio_size_id"), (
+            trade, board, _column("portfolio_size_id", "string", "parameter"),
+            _column("signal_dispersion", "float64", "measure", "return"),
+            _column("tradable_count", "int64", "quality", "count"),
+            _column("mean_coverage", "float64", "quality", "ratio"),
+        ), "Daily scoring context"),
+        _schema("target_weights", ("trade_date", "portfolio_id", "asset_id"), (
+            trade, _column("portfolio_id", "string", "identity"), asset, board,
+            _column("target_weight", "float64", "portfolio", "weight"),
+            _column("binding_constraints", "string", "diagnostic", nullable=True),
+        ), "Portfolio construction output"),
+        _schema("backtest_daily", ("trade_date", "portfolio_id"), (
+            trade, _column("portfolio_id", "string", "identity"),
+            _column("portfolio_return", "float64", "measure", "return"),
+            _column("turnover", "float64", "cost", "ratio"),
+            _column("realized_cost", "float64", "cost", "return"),
+        ), "Backtest path using an explicit execution model"),
+        _schema("execution_log", ("trade_date", "order_id"), (
+            trade, _column("order_id", "string", "identity"), asset, board,
+            _column("requested_quantity", "float64", "execution", "shares"),
+            _column("filled_quantity", "float64", "execution", "shares"),
+            _column("implementation_shortfall", "float64", "cost", "return", True),
+        ), "Order-level execution result"),
+        _schema("attribution", ("trade_date", "portfolio_id", "contribution_group", "contribution_id"), (
+            trade, _column("portfolio_id", "string", "identity"),
+            _column("contribution_group", "string", "role"),
+            _column("contribution_id", "string", "identity"),
+            _column("contribution", "float64", "attribution", "return"),
+            _column("unexplained", "float64", "quality", "return"),
+        ), "Return attribution with an explicit identity residual"),
+        _schema("benchmark_factor_returns", ("trade_date", "factor_id"), (
+            trade, factor, _column("factor_return", "float64", "benchmark", "return"),
+        ), "External academic comparison only; tag benchmark_only"),
+    )

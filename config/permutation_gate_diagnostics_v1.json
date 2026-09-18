@@ -1,0 +1,46 @@
+{
+  "diagnostic_id": "permutation_gate_diagnostics_v1",
+  "status": "diagnostic_only_not_an_acceptance_revision",
+  "source_manifest": "gold/research_pipeline/run_id=research_pipeline_v1_7f2728cf4c66c6cd/_MANIFEST.json",
+  "source_manifest_sha256": "bef27e5df12d28c06b2ccad5fcab4b78a6b41229399d1239dfaece2ae337cc47",
+  "source_run_id": "research_pipeline_v1_7f2728cf4c66c6cd",
+  "seed": 20260818,
+  "repetitions": 100,
+  "primary_horizon": 5,
+  "start": "2019-10-08",
+  "end": "2025-01-16",
+  "label_end": "2025-02-21",
+  "holdout_start": "2025-03-01",
+  "lookback": 20,
+  "replay_absolute_tolerance": 1e-12,
+  "fixed_files": {
+    "src-python/factor_matrix/calculation/components/probe_evaluation.py": "4767e2dd05710dfb1c415384c21fc2ab320c0b7ee368165cccfd48550fedf914",
+    "src-python/factor_matrix/calculation/l2/estimation_panel.py": "96e9ee7381999f4a4b01d93dbdcd950b610ec2e96d26d73333aa42bbdae1f32d",
+    "src-python/factor_matrix/calculation/l2/estimation_probe.py": "976dc66522f9644a711201d025c41b619f49eec55abc6fd8f688e3ed7c1bb7e9",
+    "src-python/factor_matrix/calculation/l2/estimation_evaluation.py": "e26b6c85878da970dec94376792c15830ac0505dc8ba2f131945b1ddfdaf360f",
+    "config/evaluation_framework_v1.json": "b98a3a435ac20bee67ca4faa7d0c690ae3fdbd34f26cda362716dfa821573fef",
+    "config/research_pipeline_v1.json": "4f5780ac5c13f504116b5dc287f082bba29bd487ac5fbe2f2d2dd5d12b5c3e4e",
+    "data/metadata/research_pipeline_latest_attempt.json": "9699992462592469fe7fc5f102c9caae1d5c7f0249d7da05a0f2fd591622f07e"
+  },
+  "analyses": [
+    "independent_full_design_lstsq_vs_published_baseline",
+    "independent_polars_average_rank_and_shuffle_replay_vs_saved_100_repetitions",
+    "finite_label_donor_vs_finite_signal_recipient_support",
+    "exact_IC_decomposition_persistent_asset_time_varying_signal_support_reranking",
+    "formation_label_overlap_contribution_from_registered_20d_5d_windows",
+    "per_asset_arithmetic_zero_mean_vs_rank_mean_and_rank_dispersion",
+    "deterministic_exhaustive_zero_center_counterexamples"
+  ],
+  "overlap_offset_rule": "source_label_date-target_signal_date in [-(lookback+horizon-1),-1] = [-24,-1] market sessions",
+  "restrictions": [
+    "no change to production signal/evaluation code",
+    "no changes to seed, source universe, horizons or sample boundaries",
+    "no rerun or promotion of M1",
+    "no threshold changes or replacement of failed results",
+    "write diagnostic manifests only, no CURRENT publication"
+  ],
+  "theory_sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6405018/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC4010955/"
+  ]
+}

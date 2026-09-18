@@ -1,0 +1,31 @@
+{
+  "name": "factor-strategy-visualization",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "npm@11.4.2",
+  "engines": {
+    "node": "24.4.1",
+    "npm": "11.4.2"
+  },
+  "scripts": {
+    "setup": "bash scripts/bootstrap-env.sh",
+    "dev": "uv run --locked python scripts/dev.py",
+    "api": "uv run --locked factor-matrix serve-api",
+    "test:python": "uv run --locked --extra dev python -m pytest -p no:cacheprovider",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "1.28.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "typescript": "7.0.2",
+    "vite": "8.2.0"
+  }
+}

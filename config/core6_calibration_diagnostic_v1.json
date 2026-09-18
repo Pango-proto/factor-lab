@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "protocol_id": "core6_calibration_diagnostic_v1",
+  "status": "authorized_diagnostic_no_release",
+  "authorization": "按照这个计划继续推动",
+  "temporal_mode": "reconstructed_diagnostic_only",
+  "production_eligible": false,
+  "holdout_start": "2025-03-01",
+  "start": "2023-04-27",
+  "end": "2025-02-28",
+  "expected_forecast_dates": 444,
+  "horizon_sessions": 1,
+  "parents": {
+    "reconstruction": {
+      "path": "data/diagnostics/core6_reconstruction_v1/run_id=core6_reconstructed_d2a15991fd32b150/_MANIFEST.json",
+      "sha256": "b1d05c3e95f0d85dff85a388c385229e924cf1a1bfb793e0b32eaab029c74915"
+    },
+    "rolling": {
+      "path": "data/diagnostics/core6_rolling_v1/run_id=core6_rolling_8b59cb32ab103a74/_MANIFEST.json",
+      "sha256": "1cbda69008ef5e31afc6e9dfb9ad363658256928f2772f62106c7fc95f3fa0f8"
+    }
+  },
+  "bindings": {
+    "config/g6_freeze_protocol_v1.json": "53b2940975827367735a8cb7aa2ac91f30ad6be0f2a014b21d3145a5dda4242f",
+    "config/l2_risk_validation_v1.json": "1e96368c0c40a7354a3182f2c2e252cbcf119a819c68e9bb7feade53f32af985",
+    "config/risk_freeze_layers_v1.json": "f57f12507eb38a824e7b3ca34d4d19f5fa234fa390ac883efb358f09c6b7f91f",
+    "config/risk_core6_design_v2.json": "44fce4161c4d388f87bd54e74fe1308e0c9e14a4b2e21ce6ee029d88e3420ff1",
+    "config/core6_reconstruction_approval_v1.json": "990824853d18042605a230a12a2072f4a50218913bc9d97e6d4c52cfcf0df6a7",
+    "config/family_root_declarations_v1.json": "bfbaa3ef3eb00ae55b1414c20f69c07cfee53aceb997b22c9e292b2610598bb4",
+    "config/alpha_risk_migration_protocol_v1.json": "a49db7d9621ecd12735dd33383d126625ae7fc232dd75b11c0efaaba82a59555"
+  },
+  "metric": "sample_std_realized_return_divided_by_predicted_sigma_ddof_1",
+  "reference_bands": {
+    "l2_generic": [
+      0.95,
+      1.05
+    ],
+    "g6_stratified": [
+      0.91,
+      1.09
+    ]
+  },
+  "threshold_precedence": "unresolved_report_both_no_release_decision",
+  "minimum_portfolio_dates": 60,
+  "rolling_window_sessions": 250,
+  "liquidity_window_minimum_dates": 250,
+  "high_risk_reference": 1.2,
+  "high_risk_rule": "diagnostic_flag_only_do_not_override_inherited_gate",
+  "strata": [
+    "overall",
+    "liquidity_decile",
+    "predicted_specific_risk_decile"
+  ],
+  "common_risk_decile_reference": "core6_predicted_Delta_at_cutoff",
+  "decile_rule": "ntile_10_sorted_value_then_asset_id",
+  "weighting": "equal_weight_ex_ante_common_forecast_eligible_assets_within_stratum",
+  "portfolio_covariance": "b_F_b_plus_sum_w_squared_Delta",
+  "specific_portfolio_variance": "sum_w_squared_Delta_independence_diagnostic",
+  "missing_outcome_policy": "retain_asset_row_mark_entire_exante_portfolio_unavailable_no_renormalization",
+  "individual_metric": "pooled_standardized_residual_std_descriptive_no_independent_asset_day_claim",
+  "paired_support": "intersection_of_positive_finite_forecasts_only_before_outcomes",
+  "outcome": "reconstruct_label_eligible_return_X_f_plus_u_check_equal_across_models",
+  "residual_diagnostics": "specific_portfolio_bias_and_standardized_mean_tail_descriptive_only",
+  "full_residual_permutation_gate": "not_run_not_satisfied",
+  "winsor_shadow": "same_prior_history_and_liquidity_groups_omit_clipping_only_no_estimator_selection",
+  "bounds_changes_allowed": false,
+  "current_change_allowed": false,
+  "risk_model_refit_allowed": false
+}

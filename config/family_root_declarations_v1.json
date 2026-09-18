@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "protocol_id": "family_root_declarations_v1",
+  "frozen_at": "2026-08-17",
+  "freeze_before_any_alpha_labels": true,
+  "declarations": [
+    {
+      "family_root_id": "valuation",
+      "declaration_version": 1,
+      "declared_role": "bettable",
+      "declaration": "The valuation dimension is not admitted to the risk basis; no valuation IC or factor-return mean has been computed before this declaration.",
+      "reason": "Economic ownership is a preregistered B-class declaration, not an inference from explanatory statistics.",
+      "declared_at": "2026-08-17",
+      "status": "frozen"
+    },
+    {
+      "family_root_id": "momentum",
+      "declaration_version": 1,
+      "declared_role": "bettable",
+      "declaration": "The momentum dimension is not admitted to the risk basis; no momentum IC or factor-return mean has been computed before this declaration.",
+      "reason": "Economic ownership is frozen before any predictive result and covers the complete family root.",
+      "declared_at": "2026-08-17",
+      "status": "frozen"
+    },
+    {
+      "family_root_id": "growth",
+      "declaration_version": 1,
+      "declared_role": "bettable",
+      "declaration": "The growth dimension is not admitted to the risk basis; no growth IC or factor-return mean has been computed before this declaration.",
+      "reason": "Economic ownership is a family-root decision, not a feature-by-feature selection after results.",
+      "declared_at": "2026-08-17",
+      "status": "frozen"
+    },
+    {
+      "family_root_id": "leverage",
+      "declaration_version": 1,
+      "declared_role": "bettable",
+      "declaration": "The leverage dimension is not admitted to the risk basis; no leverage IC or factor-return mean has been computed before this declaration.",
+      "reason": "The declaration prevents post-result movement between basis and bettable roles.",
+      "declared_at": "2026-08-17",
+      "status": "frozen"
+    },
+    {
+      "family_root_id": "earnings_yield",
+      "declaration_version": 1,
+      "declared_role": "bettable",
+      "declaration": "The earnings-yield dimension is not admitted to the risk basis; no earnings-yield IC or factor-return mean has been computed before this declaration.",
+      "reason": "The family root is declared once so sibling features cannot be selectively assigned after results.",
+      "declared_at": "2026-08-17",
+      "status": "frozen"
+    }
+  ],
+  "change_policy": {
+    "role_change": "new_preregistered_declaration_version_required",
+    "effective_before_labels": true,
+    "post_result_reclassification": "forbidden",
+    "family_root_scope": "all_features_under_the_root"
+  }
+}

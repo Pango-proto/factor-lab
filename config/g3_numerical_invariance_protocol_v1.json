@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g3_numerical_invariance_protocol_v1",
+  "registered_at": "2026-08-16",
+  "registered_before_diagnostic_run": true,
+  "diagnostic_class": "numerical_validation_not_factor_selection",
+  "threshold_semantics": {
+    "target_relative_numerical_error": 1e-12,
+    "float64_machine_epsilon": 2.220446049250313e-16,
+    "maximum_condition_number": 4503.599627370496,
+    "derivation": "target_relative_numerical_error/float64_machine_epsilon",
+    "interpretation": "worst_case_float64_linear_solve_relative_error_budget_not_statistical_identifiability",
+    "threshold_change": "forbidden"
+  },
+  "parameterization_invariance_probe": {
+    "trade_date": "2025-03-27",
+    "date_selection": "date_whose_structural_base_condition_number_equals_full_history_median",
+    "industry_column_multipliers": [0.1, 1.0, 10.0],
+    "constraint_transformation": "multiply matching industry constraint coefficients by the same multiplier",
+    "required_model_invariants": [
+      "industry_factor_return_rescales_inversely",
+      "nonindustry_factor_returns_unchanged",
+      "fitted_returns_unchanged",
+      "specific_returns_unchanged",
+      "weighted_and_unweighted_r_squared_unchanged",
+      "constraint_semantics_unchanged"
+    ],
+    "invariant_absolute_tolerance": 1e-10,
+    "raw_condition_parameterization_dependence_relative_tolerance": 1e-8
+  },
+  "equilibration_candidate": {
+    "matrix": "A=R_transpose_X_transpose_W_X_R",
+    "diagonal": "D=sqrt(diag(A))",
+    "solve": "A_hat=D_inverse_A_D_inverse; A_hat*q=D_inverse*b; y=D_inverse*q; f=R*y",
+    "reported_condition_number": "cond_2(A_hat)",
+    "free_parameters": 0,
+    "full_history_application_required": true,
+    "required_tail_statistics": ["p50", "p99", "p999", "maximum", "dates_above_frozen_limit"],
+    "status": "rejected_by_preregistered_column_scale_invariance_probe",
+    "rejection_evidence": "data/diagnostics/g3_numerical_invariance/run_id=g3_numerical_invariance_c6181807ec85f679/column_scale_invariance_probe_v1.parquet",
+    "adoption_requires": [
+      "model invariants pass for all c multipliers",
+      "equilibrated condition is invariant to the c probe within 1e-10 relative error",
+      "high precision validation passes",
+      "full history uses the same deterministic transformation"
+    ]
+  },
+  "scale_invariant_canonicalization_candidate": {
+    "amendment_registered_at": "2026-08-16",
+    "reason_for_amendment": "Reduced-space diagonal equilibration is not invariant because an original-column rescaling changes the orthonormal null-space basis by a generally non-diagonal coordinate transformation.",
+    "column_scale": "S_jj=sqrt(X_j_transpose_W_X_j)",
+    "canonical_exposures": "Z=X*S_inverse",
+    "canonical_constraints": "C_canonical=C*S_inverse",
+    "reduced_matrix": "Q_transpose_Z_transpose_W_Z_Q where Q is an orthonormal basis of null(C_canonical)",
+    "coefficient_map": "f=S_inverse*Q*q",
+    "reported_condition_number": "cond_2(Q_transpose_Z_transpose_W_Z_Q)",
+    "invariance_proof": "For any positive diagonal reparameterization T, X_new=X*T, C_new=C*T, and S_new=S*T, so X_new*S_new_inverse=X*S_inverse and C_new*S_new_inverse=C*S_inverse.",
+    "free_parameters": 0,
+    "full_history_application_required": true,
+    "adoption_requires": [
+      "model invariants pass for all c multipliers",
+      "canonical condition is invariant to the c probe within 1e-10 relative error",
+      "high precision validation passes",
+      "full history uses the same deterministic transformation"
+    ]
+  },
+  "high_precision_validation": {
+    "trade_dates": ["2022-06-27", "2023-07-06", "2023-07-12"],
+    "precision_decimal_digits": 80,
+    "comparison": "final float64 factor solution versus mpmath solve of the same final effective-weight constrained normal equations",
+    "primary_metric": "l2_norm(f64-f_high)/l2_norm(f_high)",
+    "maximum_relative_error": 1e-12,
+    "additional_outputs": ["maximum_absolute_fitted_return_difference", "maximum_constraint_error_high_precision"],
+    "failure_commitment": "If any selected date exceeds 1e-12, keep that date invalid and do not search for a third numerical remedy."
+  },
+  "publication": "diagnostic_first_no_G3_pointer_change_until_all_adoption_requirements_pass"
+}

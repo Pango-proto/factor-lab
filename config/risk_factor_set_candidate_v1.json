@@ -1,0 +1,99 @@
+{
+  "risk_set_version": 1,
+  "status": "candidate",
+  "members": [
+    {"factor_id": "country", "factor_version": 1},
+    {"factor_id": "industry_sw1", "factor_version": 1},
+    {"factor_id": "board", "factor_version": 1},
+    {"factor_id": "index_membership", "factor_version": 1},
+    {"factor_id": "size", "factor_version": 1},
+    {"factor_id": "beta", "factor_version": 1},
+    {"factor_id": "residual_volatility", "factor_version": 1},
+    {"factor_id": "liquidity", "factor_version": 1},
+    {"factor_id": "nonlinear_size", "factor_version": 1},
+    {"factor_id": "listing_age", "factor_version": 1}
+  ],
+  "baseline_members": ["country", "industry_sw1"],
+  "candidate_selection_order": [
+    "size",
+    "beta",
+    "residual_volatility",
+    "liquidity",
+    "nonlinear_size",
+    "listing_age",
+    "board",
+    "index_membership"
+  ],
+  "blocked_candidates": [
+    {
+      "factor_id": "ownership",
+      "factor_version": 1,
+      "reason": "ownership_pit is not available in L0; synthetic ownership is forbidden"
+    }
+  ],
+  "weight_model_id": "configured_market_cap_wls",
+  "selection_test_ids": [
+    "incremental_r_squared",
+    "group_residual_correlation",
+    "factor_return_volatility",
+    "exposure_persistence",
+    "coverage",
+    "design_condition_number",
+    "risk_bias_test"
+  ],
+  "selection_parameters": {
+    "incremental_r_squared_minimum": 0.005,
+    "incremental_r_squared_primary_aggregation": "median_across_daily_incremental_r_squared",
+    "incremental_r_squared_reported_diagnostic_aggregation": "mean_across_daily_incremental_r_squared",
+    "incremental_r_squared_candidate_evaluation": "fixed_preregistered_order_not_greedy",
+    "persistence_lag_trading_days": 21,
+    "persistence_minimum": 0.8,
+    "target_daily_r_squared_range": [0.3, 0.5],
+    "coverage_policy_id": "near_complete_risk_coverage",
+    "residual_correlation_test_id": "group_pairwise_residual_correlation",
+    "condition_number_policy_id": "risk_design_condition_policy",
+    "bias_test_policy_id": "predicted_vs_realized_risk_bias"
+  },
+  "candidate_specific_tests": {
+    "listing_age": {
+      "test_id": "listing_age_segmented_incremental_explanatory_power_v1",
+      "preregistered": true,
+      "registered_at": "2026-08-15",
+      "boundary_sources": {
+        "d0": "new_listing_policy_v1.d0_model_exclusion.value",
+        "d_star": "new_listing_policy_v1.d_star_reference.values"
+      },
+      "segments": [
+        {
+          "segment_id": "A_residual_price_discovery",
+          "interval": "d0 <= days_since_exchange_list <= board_regime_d_star",
+          "expected_incremental_explanatory_power": true
+        },
+        {
+          "segment_id": "B_post_steady_state_to_250",
+          "interval": "board_regime_d_star < days_since_exchange_list <= 250",
+          "expected_incremental_explanatory_power": false
+        },
+        {
+          "segment_id": "C_mature",
+          "interval": "days_since_exchange_list > 250",
+          "expected_incremental_explanatory_power": false
+        }
+      ],
+      "decision_rule": {
+        "A_only": "use_bounded_linear_decay_max_0_1_minus_d_over_d_star",
+        "none": "remove_listing_age_candidate",
+        "B_or_C": "reject_prespecified_shape_and_record_model_misspecification"
+      },
+      "per_board_regression_forbidden": true
+    }
+  },
+  "validation_artifact_run_id": null,
+  "bias_test_run_id": null,
+  "residual_correlation_run_id": null,
+  "expansion_manifest": "risk_set_expansion_v1.json",
+  "expansion_manifest_sha": "4984a57e21122d54bdb3ccbeae8f7c473440dfd9be6c983d5290deb867d2cfc4",
+  "known_residuals": [],
+  "frozen_at": null,
+  "rationale": "Candidate membership only. Orthogonalization edges live in immutable factor definitions; topology is derived and cycle-checked by the unified registry."
+}

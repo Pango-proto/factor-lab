@@ -1,0 +1,42 @@
+{
+  "schema_version": 2,
+  "protocol_id": "g4_3_residual_permutation_v2",
+  "status": "draft",
+  "purpose": "Replace the v1 absolute-s denominator with a conditional permutation ratio compatible with G3 WLS+Huber residuals.",
+  "input_run_id": "g3_risk_only_history_20260814_738ce557aa737078",
+  "groupings": ["index_CSI300", "index_CSI500"],
+  "negative_controls": ["industry", "board"],
+  "winsor_mad_k": 5.0,
+  "min_group_size": 20,
+  "min_effective_days": 20,
+  "fdr_q": 0.05,
+  "date_start": null,
+  "date_end": null,
+  "max_assets": null,
+  "asset_sampling": "balanced_by_board",
+  "industry_label_change_policy": "reject",
+  "max_changed_asset_fraction": 0.01,
+  "statistic": {
+    "name": "q_ratio",
+    "definition": "Var_t(group_mean_residual_observed) / median_b Var_t(group_mean_residual_permuted_b)",
+    "minimum_observations_per_day": 5,
+    "missingness": "exclude an asset from that date's group mean"
+  },
+  "null_hypothesis": "Conditional on the observed residual panel, missingness pattern, and daily size-by-liquidity strata, group labels are exchangeable within each date-stratum cell.",
+  "permutation": {
+    "unit": "date x stratum",
+    "strata_definition": "daily PIT risk_size decile x risk_liquidity quintile",
+    "labels_only": true,
+    "residuals_unchanged": true,
+    "seed": 20260817,
+    "n_permutations": 1000
+  },
+  "negative_control_gate": {
+    "controls": ["industry", "board"],
+    "metric": "median(q_ratio) across control groups",
+    "expected": 1.0,
+    "control_band": [0.8, 1.25],
+    "failure_action": "invalidate runner; do not interpret candidate grouping results"
+  },
+  "status_transition": "remain draft until synthetic and small-panel checks pass; no full historical run in v2 draft"
+}

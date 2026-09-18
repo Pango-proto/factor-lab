@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g4_3_residual_permutation_v1",
+  "status": "frozen",
+  "registered_at": "2026-08-17",
+  "input_run_id": "g3_risk_only_history_20260814_738ce557aa737078",
+  "strata_definition": "modal PIT risk_size decile x risk_liquidity quintile over the G3 exposure interval",
+  "groupings": ["index_CSI300", "index_CSI500"],
+  "negative_controls": ["industry", "board"],
+  "n_permutations": 1000,
+  "seed": 20260817,
+  "winsor_mad_k": 5.0,
+  "min_group_size": 20,
+  "min_obs_per_day": 5,
+  "fdr_q": 0.05,
+  "control_band": [0.8, 1.25],
+  "on_significant": "record known_residual_structure in G6; do not add X automatically; an added column requires the preregistered G4.2 membership protocol",
+  "interpretation_note": "common movement is not predictability; significance indicates possible risk-model incompleteness and is not an alpha lead",
+  "forbidden": [
+    "permute residual values",
+    "use concept/theme current membership as historical PIT labels",
+    "use ownership without a PIT source",
+    "consume research_attempt or forward-return labels"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "config_id": "l2_risk_validation_v1",
+  "version": 1,
+  "factor_covariance": {
+    "estimator": "ewma",
+    "half_life_days_source": "research_protocol.derived_params.ewma_factor_covariance_half_life_days"
+  },
+  "specific_variance": {
+    "implementation_id": "winsorized_residual_squared_ewma_group_shrinkage_v1",
+    "estimator": "winsorized_residual_squared_ewma_with_group_shrinkage",
+    "half_life_days_source": "research_protocol.derived_params.ewma_specific_variance_half_life_days",
+    "robustification": {
+      "center": "per_asset_trailing_median",
+      "scale": "1.482602218505602_times_per_asset_trailing_mad",
+      "lookback_trading_days": 252,
+      "minimum_observations": 60,
+      "clip": "center_plus_or_minus_5_times_scale",
+      "uses_only_strictly_prior_residuals_for_scale": true
+    },
+    "shrinkage": {
+      "target": "liquidity_decile_mean_specific_variance",
+      "prior_effective_observations": 120,
+      "strength_rationale": "The prior numeric conditioning diagnostic was removed with the legacy metric chain; the frozen rule remains preregistered and requires revalidation on the current risk basis before G6b.",
+      "departure_from_conventional_market_cap_grouping": "Liquidity replaces market-cap deciles because variance, conditional tail shape, Huber downweighting, and the remaining whitened-variance gradient all align with liquidity."
+    },
+    "conditioning_diagnostic_run_id": null,
+    "conditioning_diagnostic_status": "pending_current_risk_basis_rerun",
+    "required_comparison_outputs": {
+      "asset_level": [
+        "winsorized_sigma",
+        "nonwinsorized_sigma",
+        "winsorized_to_nonwinsorized_sigma_ratio"
+      ],
+      "group_axis": "liquidity_decile",
+      "group_statistics": [
+        "median_winsorized_to_nonwinsorized_sigma_ratio",
+        "mean_winsorized_to_nonwinsorized_sigma_ratio"
+      ],
+      "decision_role": "diagnostic_known_residual_not_an_estimator_selection_rule",
+      "rationale": "Quantify how much PIT winsorization reduces predicted risk, especially in low-liquidity names, without allowing the comparison to tune the frozen clip rule."
+    },
+    "preregistered_at": "2026-08-16",
+    "rationale": "The estimator rule is preregistered, but its former numeric evidence belonged to the deleted legacy metric chain and cannot be cited for the current basis."
+  },
+  "bias_test": {
+    "lower_bound": 0.95,
+    "upper_bound": 1.05,
+    "minimum_observations": 60,
+    "independent_stratification_axes": [
+      "predicted_specific_risk_decile",
+      "liquidity_decile"
+    ],
+    "liquidity_decile_test": {
+      "window_trading_days": 250,
+      "lower_bound": 0.91,
+      "upper_bound": 1.09,
+      "minimum_observations_per_decile": 250,
+      "rationale": "Liquidity is the common axis of the observed variance, tail-shape, Huber-downweight, and specific-variance-shrinkage gradients."
+    }
+  },
+  "residual_correlation": {
+    "rolling_window_days": 252,
+    "permutations": 1000,
+    "random_seed": 20260815,
+    "stratify_by": ["industry_l1", "market_cap_decile"],
+    "bh_q": 0.05
+  },
+  "freeze_policy": {
+    "allow_documented_known_residual": true,
+    "require_bias_test_pass": true,
+    "require_manifest_lineage": true,
+    "statistical_factor_escalation_on_bias_failure": {
+      "increase_J": "forbidden",
+      "required_action": "investigate_specific_variance_calibration_and_record_failure",
+      "g6_disposition": "blocked_under_current_protocol_until_bias_passes_or_an_explicit_pre_result_protocol_amendment_is_approved",
+      "rationale": "A Delta calibration failure is not evidence that additional common-factor directions are stable or appropriate."
+    }
+  }
+}

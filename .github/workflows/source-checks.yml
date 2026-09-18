@@ -1,0 +1,35 @@
+name: Source checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  source-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - uses: astral-sh/setup-uv@v6
+      - name: Install locked Python dependencies
+        run: uv sync --locked --extra dev
+      - name: Check architecture invariants
+        run: uv run --locked python scripts/check_architecture_invariants.py
+      - name: Check frozen config consumers
+        run: uv run --locked python scripts/check_frozen_config_consumption.py
+      - name: Run synthetic tests including G3 admission gate cases
+        run: uv run --locked --extra dev python -m pytest -q -p no:cacheprovider -m "not local_data"
+      # The live G3 release gate requires the excluded local data/ evidence.
+      # A green source check does not attest any real-data release.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node --test tests/chart_geometry.test.mjs

@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "registry_id": "g6_known_residual_registry_v1",
+  "status": "open_until_g6_freeze",
+  "entries": [
+    {
+      "id": "cross_industry_membership_gaps",
+      "magnitude": {"base_tradable_rows": 9597, "affected_assets": 22},
+      "evidence": "data/gold/tradable_universe/artifact_version=1/run_id=tradable_universe_v1_20260814_f3cbb68ab636/tradable_universe.parquet",
+      "reason_not_fixed": "Different-L1 gaps cannot be filled without inventing an industry history.",
+      "disposition": "Retain null observation state and exclude affected rows where an identified industry design is required."
+    },
+    {
+      "id": "financial_revision_first_seen_delay",
+      "magnitude": {"conservative_first_seen_count": 2573, "revision_count": 106435, "ratio": 0.024174378728801616},
+      "evidence": "data/diagnostics/g0_history/run_id=g0_history_c68eaf32bcae16fb/report.json",
+      "reason_not_fixed": "Backdating adjusted latest financial values would introduce look-ahead bias.",
+      "disposition": "Use conservative first-seen timestamps and disclose the delayed fraction."
+    },
+    {
+      "id": "theme_dimension_has_no_historical_pit_probe",
+      "magnitude": {"predecision_historical_probe_available": false},
+      "evidence": "data/metadata/manifests/concept_snapshot_20260814_0e3d2c21.json",
+      "reason_not_fixed": "A current concept snapshot cannot reconstruct point-in-time theme membership history.",
+      "disposition": "Do not claim a historical theme residual-correlation test; report the missing probe explicitly in G4.3/G6."
+    },
+    {
+      "id": "sw2021_historical_revision_unverifiable",
+      "magnitude": {
+        "snapshot_ingested_at": "2026-08-14T11:15:54.942540+00:00",
+        "latest_daily_snapshot": "data/metadata/manifests/industry_classification_20260818_42e9681f3651.json",
+        "assets": 5895,
+        "membership_rows": 7899,
+        "effective_from_dates": 2034,
+        "historical_snapshot_count": 1,
+        "known_2026_07_01_reclassification_assets": 59,
+        "known_2026_07_01_reclassification_fraction": 0.010008481764207
+      },
+      "evidence": "data/silver/industry_membership_history/data.parquet",
+      "reason_not_fixed": "SW2021 membership history is a one-time 2026-08-14 ingest with no earlier snapshots; 2019-2026 retrospective revisions cannot be reconstructed from the repository.",
+      "potential_effect": "Using a revised industry interval to explain an earlier return may overstate historical G3 fit; direction and magnitude are not identifiable from the retained data.",
+      "disposition": "Accept as a permanent known residual at G6. Do not mark historical industry PIT as verified. Daily SW2021 snapshots with available_at/first_seen metadata are active from the 2026-08-18 refresh onward."
+    },
+    {
+      "id": "g4_3_industry_negative_control_residual_structure",
+      "magnitude": {
+        "confirmation_run_id": "g4_3_residual_permutation_v2_abae6c91242e1176",
+        "date_start": "2024-11-28",
+        "date_end": "2025-02-28",
+        "n_dates": 60,
+        "n_assets": 480,
+        "n_permutations": 1000,
+        "effective_industry_groups": 6,
+        "industry_q_ratio_median": 1.7737574389791273,
+        "board_q_ratio_median": 1.027197421203277,
+        "weight_dispersion_diagnostic": "data/diagnostics/g4_3_residual_permutation_v2/weight_dispersion_qratio_diagnostic_20260818.json",
+        "label_changed_assets": 0
+      },
+      "evidence": "data/diagnostics/g4_3_residual_permutation_v2/run_id=g4_3_residual_permutation_v2_abae6c91242e1176/_MANIFEST.json",
+      "reason_not_fixed": "The industry negative control remains above the frozen control band across four windows, including the clean estimation window. With six effective industry groups, the weight-dispersion diagnostic has insufficient power to distinguish or exclude the candidate explanations.",
+      "disposition": "G4.3 completed with an unverified-control gap. Do not interpret 1.774 as evidence of industry residual common movement; retain both the WLS/Huber weighting explanation and the semantic-industry explanation as unresolved candidates. Do not add a factor, redesign the statistic, or run full coverage in this phase. Carry the limitation explicitly into G6."
+    },
+    {
+      "id": "g4_3_weighted_null_baseline_uncalibrated",
+      "magnitude": {
+        "equal_weight_observed": 1.407,
+        "equal_weight_random_label_baseline": 1.062,
+        "weighted_observed": 0.640,
+        "weighted_random_label_baseline": 0.582
+      },
+      "evidence": "data/diagnostics/g4_3_residual_permutation_v2/weighted_baseline_calibration_observation_20260818.json",
+      "reason_not_fixed": "The weighted random-label baseline is not centered at one under the current independent-variance normalization; the original diagnostic was not rerun in this phase.",
+      "disposition": "Keep as an independent calibration residual. Downstream diagnostics must not treat the weighted baseline as validated until separately recalibrated."
+    },
+    {
+      "id": "preexisting_registry_store_contract_test_failures_20260818",
+      "magnitude": {
+        "first_observed_at": "2026-08-18T18:21:47+10:00",
+        "full_suite_passed": 186,
+        "full_suite_failed": 5,
+        "failing_tests": [
+          "tests/test_factor_engine.py::test_registry_store_materializes_risk_set_members",
+          "tests/test_factor_engine.py::test_alpha_neutralization_can_reference_only_a_frozen_risk_set",
+          "tests/test_factor_engine.py::test_candidate_risk_set_sync_physically_removes_blocked_stale_member",
+          "tests/test_factor_engine.py::test_frozen_definition_fields_are_database_immutable",
+          "tests/test_feature_registry_v2.py::test_same_feature_is_allowed_to_migrate_across_basis_versions_but_not_self_neutralize"
+        ],
+        "evaluation_framework_targeted_tests_passed": 15,
+        "latest_full_suite_passed": 193,
+        "latest_full_suite_failed": 5,
+        "architecture_invariants_passed": true
+      },
+      "evidence": "data/diagnostics/evaluation_alignment/preexisting_registry_store_contract_failures_20260818.json",
+      "reason_not_fixed": "The failures were present when validating the evaluation-framework increment and are outside its alignment-diagnostic scope. Absence of file overlap is evidence of separation, not proof that the failures are harmless.",
+      "potential_effect": "The repository must not be described as full-suite green. Risk-set persistence and frozen-definition database guarantees remain unverified by the current full suite.",
+      "disposition": "RESOLVED 2026-08-20. All five failures were stale test fixtures from the v2 registry migration (table renames, error-code renames, retire-vs-delete semantics). Production constraints verified intact. Full suite: 198 passed."
+    },
+    {
+      "id": "raw_condition_parameterization_defect_resolved",
+      "magnitude": {"formerly_invalid_dates": 3, "raw_maximum_condition_number": 6259.040234679096, "scale_invariant_maximum_condition_number": 90.3901459173667, "unchanged_preregistered_maximum": 4503.599627370496},
+      "evidence": "data/gold/l2b_risk_only/run_id=g3_risk_only_history_20260814_a1a6dd9d1eda3d05/_MANIFEST.json",
+      "reason_not_fixed": "Resolved: the former gate measured a raw reduced Gram whose condition number changed under an economically equivalent factor-column rescaling.",
+      "disposition": "Use full-factor-space weighted column canonicalization before the constraint null-space projection; retain published exposure and factor-return units and the original numerical-error threshold."
+    },
+    {
+      "id": "ragged_factor_return_panel_not_supported",
+      "magnitude": {"variable_factor_set_rule_active": false, "pairwise_ewma_covariance_implemented": false, "positive_semidefinite_repair_implemented": false},
+      "evidence": "config/l2c_ragged_factor_panel_readiness_v1.json",
+      "reason_not_fixed": "No variable industry-column rule has been selected. The current covariance function requires an equal-length factor axis and has no pairwise-availability or PSD-repair path.",
+      "disposition": "Block any remediation that creates factor-level missing returns until the ragged-panel estimator contract is implemented and tested."
+    }
+  ]
+}

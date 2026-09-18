@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "protocol_id": "future_alpha_neutralization_policy_v1",
+  "registered_at": "2026-08-16",
+  "activation": "when_each_future_alpha_candidate_is_registered",
+  "g6_risk_freeze_dependency": false,
+  "all_risk_shorthand": "forbidden",
+  "required_explicit_boolean_decisions": [
+    "beta",
+    "residual_volatility",
+    "liquidity",
+    "listing_age",
+    "statistical_factors"
+  ],
+  "registration_contract": {
+    "primary_key": ["feature_id", "feature_version", "risk_set_version", "horizon_days"],
+    "definition_source": "feature_registry",
+    "assertion_table": "alpha_assertion",
+    "field": "params.neutralization_decisions",
+    "family_field": "forbidden",
+    "family_root_declaration_required": true,
+    "family_root_declared_role": "bettable",
+    "allowed_values_per_dimension": [true, false],
+    "missing_dimension": "reject_registration",
+    "extra_dimension": "reject_registration",
+    "neutralize_against": "explicit_factor_id_tuple_only",
+    "decision_and_factor_list_must_match": true,
+    "nonempty_neutralize_against_requires_risk_set_version": true,
+    "referenced_risk_set_must_be_frozen": true,
+    "statistical_factors_true_means": "forbidden: statistical factors are Delta-only covariance directions, not X columns or alpha-neutralization exposures",
+    "statistical_factors_must_be_false": true
+    ,"nonempty_neutralization_requires_fidelity_event": true,
+    "fidelity_config_source": "l2_predictivity_v1.neutralization_fidelity"
+  },
+  "required_when_any_neutralization_is_true": {
+    "field": "params.neutralization_comparison",
+    "registered_before_labels": true,
+    "arms": ["raw", "neutralized"],
+    "metric": "IC",
+    "interpretation": "Exposure attenuation does not bound IC loss; the raw-versus-final-neutralized comparison must be declared before any forward-return label is inspected."
+  },
+  "non_factor_examples": {
+    "neutralize_none": {
+      "params.neutralization_decisions": {
+        "beta": false,
+        "residual_volatility": false,
+        "liquidity": false,
+        "listing_age": false,
+        "statistical_factors": false
+      },
+      "neutralize_against": []
+    },
+    "neutralize_selected_dimensions": {
+      "params.neutralization_decisions": {
+        "beta": true,
+        "residual_volatility": false,
+        "liquidity": true,
+        "listing_age": false,
+        "statistical_factors": false
+      },
+      "neutralize_against": [
+        "beta",
+        "liquidity"
+      ],
+      "risk_set_version": "required_and_must_identify_the_frozen_risk_set"
+      ,"params.neutralization_comparison": {"registered_before_labels":true,"arms":["raw","neutralized"],"metric":"IC"}
+    }
+  },
+  "scope_note": "This policy reserves no alpha and makes no neutralization choice. It applies separately to every alpha candidate proposed after the G6 risk model is frozen. Statistical factors are covariance-only Delta directions and must never be used as alpha-neutralization exposures."
+}

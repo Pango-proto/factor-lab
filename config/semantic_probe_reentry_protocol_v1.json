@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "protocol_id": "semantic_probe_reentry_protocol_v1",
+  "frozen_at": "2026-08-16",
+  "trigger": "a genuinely new economic descriptor is proposed before a future alpha assertion enters alpha_assertion",
+  "preconditions": [
+    "the new descriptor list and formulas are declared and hashed before execution",
+    "the list contains no descriptor previously tested against the same risk basis",
+    "the statistical subspace and L1 manifests carry the same current risk_basis_id and risk_metric_id, and all frozen semantic descriptors are rerun together on a new basis",
+    "semantic_probe_decision_count increments in the separate semantic_probe_ledger; exposure-only probes do not enter the return-hypothesis BH denominator"
+  ],
+  "forbidden": [
+    "rerun a previously tested descriptor against the same basis",
+    "change J and rerun only the descriptors whose earlier overlap was inconvenient",
+    "add, remove, transform, or proxy descriptors after seeing overlap results"
+  ],
+  "analyst_coverage_unlock": "historical PIT coverage observations include source availability timestamps, the source is registered and hashed, and the full formula is declared before the reentry event",
+  "theme_proxy_unlock": "the proxy is PIT-computable, registered as a new descriptor before any alpha result, and satisfies the same hash and variant-cost rules",
+  "research_event_requirement": true
+  ,"multiplicity_boundary": {
+    "return_labels_used": false,
+    "ledger": "semantic_probe_ledger",
+    "cross_basis_cumulative_count_never_resets": true,
+    "manifest_must_report_count_before_and_after_run": true,
+    "included_in_l2a_bh_denominator": false,
+    "bh_exclusion_rationale": "The probe assertion concerns omitted semantic structure in risk exposures, not whether any factor predicts returns.",
+    "future_alpha_transform_or_horizon_variants_remain_in_research_attempt_ledger": true
+  }
+}

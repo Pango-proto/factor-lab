@@ -1,0 +1,212 @@
+{
+  "config_id": "cost_model_v2",
+  "version": 2,
+  "status": "draft_pending_fee_reconciliation",
+  "account_context": {
+    "capital_base_yuan": 200000,
+    "evidence": "Rates transcribed from user-provided IMG_0450.PNG; user explicitly confirmed 5 CNY minimum per stock commission charge on 2026-09-13. Screenshot date is unknown. Capital remains an inherited research assumption.",
+    "capital_source": "inherited_v1_research_assumption"
+  },
+  "cost_is_per_ticket_not_per_notional": {
+    "statement": "Commission depends on both traded notional and the number of commission charge units because each charge has a confirmed 5 CNY minimum.",
+    "worked_contrast": {
+      "twenty_charges_of_2000_yuan": {
+        "total_traded_notional_yuan": 40000,
+        "charge_count": 20,
+        "commission_yuan": 100
+      },
+      "four_charges_of_10000_yuan": {
+        "total_traded_notional_yuan": 40000,
+        "charge_count": 4,
+        "commission_yuan": 20
+      }
+    },
+    "design_implication": "Evaluate holding count, diversification and fragmented rebalancing jointly. The minimum fee alone does not determine an optimal holding count or mandate whole-position replacement.",
+    "charge_aggregation_policy": "unverified_order_vs_execution_vs_daily_aggregation; do not apply a separate minimum to each partial fill without broker evidence"
+  },
+  "explicit_costs": {
+    "commission": {
+      "rate": {
+        "sh_sz_equity": 0.0001854,
+        "sh_sz_fund_etf_lof": 0.0002,
+        "bse": 0.001375,
+        "neeq": 0.0015
+      },
+      "minimum_charge_yuan": 5.0,
+      "minimum_charge_confirmed": true,
+      "formula": "commission_yuan = max(rate * ticket_notional, 5.0)",
+      "floor_binding_below_notional_yuan": 26968.72,
+      "sides": "both",
+      "all_in": null,
+      "all_in_note": "Not established by the visible screenshot. It contains an additional taxes/fees section whose details are cut off. Do not assume either inclusive commission or additive handling/regulatory fees without reconciliation.",
+      "evidence": {
+        "rates": "user screenshot IMG_0450.PNG",
+        "minimum_charge": "explicit user confirmation 2026-09-13",
+        "minimum_scope_verified": "sh_sz_equity; verify other instrument schedules before activation"
+      },
+      "arithmetic_examples_before_rounding": [
+        {
+          "notional_yuan": 10000,
+          "proportional_commission_yuan": 1.854,
+          "charged_commission_yuan": 5.0
+        },
+        {
+          "notional_yuan": 20000,
+          "proportional_commission_yuan": 3.708,
+          "charged_commission_yuan": 5.0
+        },
+        {
+          "notional_yuan": 30000,
+          "proportional_commission_yuan": 5.562,
+          "charged_commission_yuan": 5.562
+        }
+      ],
+      "rounding_policy": "unverified; keep calculation precision and reconcile currency rounding against broker statement"
+    },
+    "stamp_duty": {
+      "rate": 0.0005,
+      "sides": "sell_only",
+      "applies_to": [
+        "sh_sz_equity",
+        "bse",
+        "neeq"
+      ],
+      "excludes": [
+        "fund_etf_lof"
+      ],
+      "effective_from": "2023-08-28",
+      "verification_status": "inherited_historical_schedule_not_confirmed_by_visible_screenshot"
+    },
+    "transfer_fee": {
+      "rate": 1e-05,
+      "sides": "both",
+      "applies_to": [
+        "sh_equity",
+        "bse",
+        "neeq"
+      ],
+      "excludes": [
+        "sz_equity"
+      ],
+      "verification_status": "inherited_v1_assumption_requires_investor_charge_reconciliation_including_sz"
+    }
+  },
+  "implicit_costs": {
+    "primary_driver": "tick_induced_half_spread",
+    "rationale": "A-share tick size is a fixed 0.01 CNY, so quoted spread in basis points is a function of price, not of liquidity. At 200k capital a ticket is roughly 10-20k CNY, negligible against any liquid name's depth, so impact is second order.",
+    "half_spread_model": "0.5 * 0.01 / close_price",
+    "half_spread_sides": "both",
+    "price_band_reference_bps": {
+      "price_5": 10.0,
+      "price_10": 5.0,
+      "price_20": 2.5,
+      "price_30": 1.67,
+      "price_50": 1.0,
+      "price_100": 0.5
+    },
+    "impact": {
+      "model": "none_at_current_capital",
+      "activation_threshold_yuan": 5000000,
+      "rationale": "Reinstate a participation-rate impact term only when ticket size becomes a material fraction of daily volume. Modelling impact now adds a free parameter with no data to calibrate it."
+    },
+    "queue_and_fill_risk": {
+      "model": "not_modelled",
+      "disposition": "known_residual",
+      "rationale": "Marketable-limit execution at the next unified trading day is assumed. Partial-fill and adverse-selection costs remain an unmodelled residual."
+    }
+  },
+  "turnover_convention": {
+    "portfolio_turnover": "0.5 * sum_i abs(w_i_t - w_i_tminus1)",
+    "sides": "one_sided",
+    "ticket_count": "number of assets whose weight change implies a trade of at least one board lot",
+    "cost_driver": "actual_charge_notional_and_charge_count",
+    "turnover_role": "reporting_only",
+    "restatement_required": "Recompute from actual executed trades; declare cash treatment and use drifted pretrade holdings for turnover. Historical smoke is superseded."
+  },
+  "position_count_cost_table": {
+    "note": "Round-trip explicit cost in basis points, 深圳A股 (no transfer fee), excluding half spread.",
+    "n_10": {
+      "ticket_yuan": 20000,
+      "commission_bps": 2.5,
+      "round_trip_bps": 10.0
+    },
+    "n_12": {
+      "ticket_yuan": 16667,
+      "commission_bps": 3.0,
+      "round_trip_bps": 11.0
+    },
+    "n_15": {
+      "ticket_yuan": 13333,
+      "commission_bps": 3.75,
+      "round_trip_bps": 12.5
+    },
+    "n_20": {
+      "ticket_yuan": 10000,
+      "commission_bps": 5.0,
+      "round_trip_bps": 15.0
+    },
+    "n_30": {
+      "ticket_yuan": 6667,
+      "commission_bps": 7.5,
+      "round_trip_bps": 20.0
+    },
+    "tension": "Lower per-ticket commission can conflict with diversification, but no optimal holding count has been established.",
+    "status": "historical_v1_scenario_only_not_verified_total_cost"
+  },
+  "universe_cost_exclusions": {
+    "bse": {
+      "excluded": true,
+      "reason": "13.75 bps per side is 7.4x the 沪深 rate; round-trip explicit cost reaches roughly 32.6 bps before spread.",
+      "affected_asset_count_at_20260814": 290
+    },
+    "neeq": {
+      "excluded": true,
+      "reason": "15.0 bps per side plus materially worse liquidity."
+    },
+    "status": "inherited_strategy_choice_not_a_consequence_mandated_by_screenshot"
+  },
+  "preregistered_t4_grid": {
+    "position_counts": [
+      10,
+      12,
+      15,
+      20
+    ],
+    "rebalance_frequencies_trading_days": [
+      1,
+      2,
+      3,
+      5,
+      10
+    ],
+    "smoothing_variants": [
+      "none",
+      "5d_moving_average"
+    ],
+    "selection_rule": "highest net information ratio under this cost model",
+    "selection_frozen_before_results": false,
+    "rationale": "Both N and frequency change cost through the ticket-count channel, so they cannot be selected independently.",
+    "status": "inherited_v1_grid; revise preregistration before selection under v2"
+  },
+  "decision_role": "cost_estimate_artifact_input_not_a_signal_selection_rule",
+  "forbidden": [
+    "tuning the spread or impact model after seeing net performance",
+    "computing commission without applying the 5 CNY per-ticket floor",
+    "excluding an asset class on cost grounds without recording it in universe_cost_exclusions",
+    "treating the absence of an impact term as evidence that impact is zero at larger capital"
+  ],
+  "revision_of": "cost_model_v1",
+  "reviewed_at": "2026-09-13",
+  "activation_gate": {
+    "ready_for_total_cost_backtest": false,
+    "unresolved": [
+      "commission inclusion of handling/regulatory fees",
+      "investor-level transfer-fee treatment including Shenzhen",
+      "minimum fee charge aggregation and currency rounding",
+      "time-versioned historical taxes and fees",
+      "applicable minimums for instruments outside sh_sz_equity"
+    ],
+    "unknown_is_zero": false,
+    "runtime_note": "No existing Python consumer was found for v1 during this review. This v2 is an explicit draft contract, not an implemented cost engine."
+  }
+}

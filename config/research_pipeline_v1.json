@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "pipeline_id": "research_pipeline_v1",
+  "evaluation_config": "evaluation_framework_v1.json",
+  "return_label_policy": "return_label_policy_v1.json",
+  "max_suspended_fraction": 0.5,
+  "purpose": "M1 non-deployable framework probe; holdout remains sealed",
+  "publication_rule": "Only passed research gates advance CURRENT; blocked results remain auditable"
+}

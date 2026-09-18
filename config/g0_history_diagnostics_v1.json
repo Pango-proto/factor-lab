@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "diagnostic_id": "g0_history_diagnostics_v1",
+  "industry": {
+    "classification_standard": "SW2021",
+    "regression_level": "L1",
+    "metadata_levels": ["L1", "L2"]
+  },
+  "return_distribution": {
+    "absolute_warning_threshold": 0.2,
+    "absolute_extreme_threshold": 0.5
+  },
+  "l2_label_policy_path": "config/return_label_policy_v1.json",
+  "diff": {
+    "largest_universe_moves": 20,
+    "sample_rows": 50
+  }
+}

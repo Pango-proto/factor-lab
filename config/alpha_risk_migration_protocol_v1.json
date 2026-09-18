@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "protocol_id": "alpha_risk_migration_protocol_v1",
+  "frozen_at": "2026-08-17",
+  "roles": ["basis", "bettable", "probe", "unassigned"],
+  "default_role": "unassigned",
+  "role_assignment": {
+    "explicit_required": true,
+    "unassigned_is_not_in_design_matrix": true,
+    "unassigned_is_not_in_fdr_or_score": true,
+    "direction_exists_only_on": "alpha_assertion"
+  },
+  "alpha_to_risk": {
+    "allowed": true,
+    "requires_new_risk_set_version": true,
+    "trigger": {
+      "nw_t_not_significant": true,
+      "sd_factor_return_remains_nonzero": true,
+      "incremental_r2_minimum": 0.005,
+      "exposure_persistence_minimum": 0.8,
+      "minimum_regimes": 2,
+      "minimum_months": "pre_registered_before_evaluation"
+    },
+    "required_status": "absorbed_into_basis",
+    "old_assertion_status": "stale_after_new_basis_is_published"
+  },
+  "risk_to_alpha": {
+    "allowed": false,
+    "exception": "new_risk_basis_version_with_new_family_root_declaration_before_any_labels",
+    "reason": "Removing a control variable mechanically raises other alpha ICs and reverses the correctness incentive."
+  },
+  "re_capturing_cost": {
+    "on_risk_set_version_change": [
+      "mark every alpha_assertion tied to the old risk_set_version stale",
+      "recompute every alpha exposure under the new basis",
+      "rerun every IC and Fama-MacBeth evaluation",
+      "issue a new research_attempt for each re-registered feature-horizon assertion; submitted and unsubmitted attempts both remain in the family-root FDR ledger",
+      "increase the current FDR denominator by the new assertion attempts",
+      "never pool old-basis and new-basis IC conclusions"
+    ],
+    "cadence": "annual_or_exceptional_not_daily_or_quarterly_tuning"
+  },
+  "statistical_factors": {
+    "role": "basis",
+    "bettable": false,
+    "formula_expr": null,
+    "lineage": "derived_from_run_id_required"
+  },
+  "invalidated_negative_ic": {
+    "must_distinguish": ["pure_decay", "riskification_absorption"],
+    "pure_decay": "IC_to_zero_and_sd_collapses_and_incremental_r2_below_threshold",
+    "riskification_absorption": "IC_NW_t_not_significant_but_sd_persists_and_incremental_r2_and_exposure_persistence_pass_across_preregistered_regimes"
+  }
+}

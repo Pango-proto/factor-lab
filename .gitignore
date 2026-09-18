@@ -1,0 +1,45 @@
+# Local datasets, research outputs and generated previews
+/data/
+/reports/
+/public/demo-backtest/
+/dist/
+/coverage/
+/htmlcov/
+*.log
+*.tmp
+*.bak
+*.tsbuildinfo
+.coverage
+
+# Markdown documents stay local for this initial publication
+*.[mM][dD]
+*.[mM][aA][rR][kK][dD][oO][wW][nN]
+
+# Dependencies, caches and local worktrees
+node_modules/
+.venv/
+.venv-*/
+.uv-cache/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.worktrees/
+
+# Credentials and machine-local settings
+.env
+.env.*
+!.env.example
+*.token
+*.secret
+*.pem
+*.key
+src-python/factor_matrix/_local_secrets.py
+/ops/*.plist
+/experiments/*/runtime.local.json
+.codex/
+.agents/
+.DS_Store
+.Rhistory

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "decision_id": "g4_statistical_factor_destination_v1",
+  "status": "frozen_architecture_decision",
+  "registered_at": "2026-08-17",
+  "risk_set_version": 1,
+  "design_matrix": {
+    "column_count": 44,
+    "membership_unchanged": true,
+    "statistical_factors_in_X": false
+  },
+  "rank_decision": {
+    "J": 5,
+    "definition": "min(J_MP,J_stable)",
+    "J_MP": ">=20",
+    "J_MP_censored": true,
+    "J_stable": 5,
+    "source_manifest": "data/diagnostics/g4_statistical_spectrum/run_id=g4_spectrum_20260814_08cf449b2200c14f/_MANIFEST.json",
+    "source_manifest_sha256": "30e24d746f318f7a59cc06bc78e1b0fbc8caf3d4be448dbc39e44934d32136f5",
+    "source_field": "headline.decision_factor_count",
+    "g3_run_id": "g3_risk_only_history_20260814_738ce557aa737078"
+  },
+  "risk_destination": {
+    "destination": "specific_covariance_low_rank_correction",
+    "representation": "V = X F X' + Delta; Delta = diag(delta) + L L'",
+    "low_rank_factor_count": 5,
+    "statistical_factor_returns_are_not_risk_set_members": true,
+    "X_is_unchanged": true,
+    "iteration_required": false,
+    "reason": "The factors are extracted from G3 residuals and must not be inserted into X before alpha testing; they model residual covariance only."
+  },
+  "implementation_gate": {
+    "required_before_G5": true,
+    "must_derive_rank_from": "this_decision_record.rank_decision.source_manifest",
+    "hardcoded_rank_forbidden": true,
+    "factor_basis_reestimation": "not_required_for_destination_decision"
+  }
+}

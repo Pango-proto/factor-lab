@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "readiness_id": "l2c_ragged_factor_panel_readiness_v1",
+  "registered_at": "2026-08-16",
+  "current_status": "not_supported_block_variable_factor_set",
+  "implementation_evidence": {
+    "path": "src-python/factor_matrix/calculation/l2/risk_modeling.py",
+    "function": "ewma_factor_covariance",
+    "requires_equal_length_factor_axes": true,
+    "pairwise_available_observations": false,
+    "positive_semidefinite_repair": false,
+    "nonfinite_input_guard": false
+  },
+  "activation_scope": "Any G3 rule that makes a factor return unavailable on only a subset of otherwise valid dates",
+  "required_before_activation": [
+    "define pairwise EWMA clocks and minimum pair observations",
+    "define deterministic positive-semidefinite repair",
+    "test board/index inception and intermittent industry columns",
+    "version the factor covariance estimator"
+  ],
+  "current_decision": "No mass-based or other variable-column remediation is activated by the industry-mass diagnostic."
+}

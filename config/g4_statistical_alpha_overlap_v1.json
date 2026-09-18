@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g4_statistical_alpha_overlap_v1",
+  "registered_at": "2026-08-16",
+  "run_policy": "exactly_once_per_risk_basis",
+  "risk_basis_id": "risk_basis_5649d34a30c03cef",
+  "risk_metric_id": "risk_metric_524163ea01abfe28",
+  "activation_status": "pending_valid_g3_and_statistical_spectrum",
+  "decision_sample_end_inclusive": "2025-02-28",
+  "g3_run_id": null,
+  "statistical_factor_count_source": "g4_1_statistical_factor_spectrum.headline.J_stable",
+  "diagnostic_class": "A_exposure_to_exposure_no_return_labels_no_fdr_consumption",
+  "basis_policy": "multivariate_subspace_R_squared_is_primary_and_rotation_invariant; per-column median_absolute_correlation_is_diagnostic_because_eigenvector_sign_is_indeterminate",
+  "features": [
+    {"id": "book_to_price", "formula": "1/pb", "source": "valuation_daily", "availability": "available"},
+    {"id": "earnings_to_price", "formula": "1/pe_ttm", "source": "valuation_daily", "availability": "available"},
+    {"id": "momentum_12_1", "formula": "product(1+return[t-252:t-21])-1", "source": "returns_daily", "minimum_observations": 200, "availability": "available"},
+    {"id": "reversal_1m", "formula": "-(product(1+return[t-19:t])-1)", "source": "returns_daily", "minimum_observations": 15, "availability": "available"},
+    {"id": "roe_ttm_implied", "formula": "pb/pe_ttm", "source": "valuation_daily", "availability": "available"},
+    {"id": "asset_growth_yoy", "formula": "latest_PIT_total_assets/latest_PIT_same_report_period_previous_year_total_assets-1", "source": "financial_pit", "availability": "available"},
+    {"id": "analyst_coverage_change", "formula": null, "source": null, "availability": "unavailable_no_historical_PIT_source_no_proxy_allowed"}
+  ],
+  "interpretation": [
+    {"r_squared_minimum": 0.0, "r_squared_maximum_exclusive": 0.1, "classification": "alpha_dimension_largely_unabsorbed"},
+    {"r_squared_minimum": 0.1, "r_squared_maximum_inclusive": 0.3, "classification": "partial_absorption_record_expected_decay"},
+    {"r_squared_minimum_exclusive": 0.3, "r_squared_maximum_inclusive": 1.0, "classification": "material_absorption_requires_g6_neutralization_decision"}
+  ],
+  "forbidden_outputs": ["IC", "return_spread", "portfolio_return", "performance_metric"],
+  "automatic_change_to_J": false,
+  "automatic_alpha_neutralization_decision": false
+}

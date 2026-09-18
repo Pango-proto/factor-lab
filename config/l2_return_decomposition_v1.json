@@ -1,0 +1,47 @@
+{
+  "config_id": "l2_return_decomposition_v1",
+  "version": 1,
+  "allowed_modes": ["risk_only", "risk_plus_alpha"],
+  "label": "next_trading_day_realized_return",
+  "weight_scheme": "weight_metric_contract_v1.regression_base_weight",
+  "formal_scheme_id": "structural_pit_v1",
+  "weight_artifact_required": true,
+  "solver": "scale_invariant_canonicalized_equality_constrained_wls_v1",
+  "categorical_constraints_source": "l1_risk_exposure_v1.categorical_constraint_blocks",
+  "categorical_constraint_weight": "float_market_cap_share_within_each_block",
+  "expected_deficiency": "daily_rank_of_constraint_matrix",
+  "condition_number_matrix": "Q_transpose_Z_transpose_W_Z_Q where S_jj=sqrt(X_j_transpose_W_X_j), Z=X*S_inverse, and Q spans null(C*S_inverse)",
+  "numerical_preconditioning": {
+    "implementation_id": "full_factor_space_weighted_column_canonicalization_v1",
+    "free_parameters": 0,
+    "published_exposure_units_changed": false,
+    "published_factor_return_units_changed": false,
+    "coefficient_map": "f=S_inverse*Q*q",
+    "invariance": "For positive diagonal T with X_new=X*T and C_new=C*T, both Z and C*S_inverse are unchanged.",
+    "evidence": "data/diagnostics/g3_numerical_invariance/run_id=g3_numerical_invariance_a607c56b2cbe2299/_MANIFEST.json"
+  },
+  "robustifier": {
+    "method": "huber_irls",
+    "implementation_id": "huber_irls_whitened_v1",
+    "residual_space": "sqrt_W_times_residual",
+    "residual_center": "zero_from_weighted_country_normal_equation",
+    "scale": "reestimated_each_iteration_as_median_absolute_whitened_residual_about_zero_divided_by_0.6744897501960817",
+    "delta_source": "research_protocol.derived_params.huber_delta",
+    "maximum_iterations": 25,
+    "convergence_tolerance": 1e-10
+  },
+  "observation_policy": {
+    "hard_residual_deletion": "forbidden",
+    "specific_return_domain": "full_finite_label_domain",
+    "estimation_domain": "full_finite_label_domain_excluding_non_equilibrium_prices",
+    "outlier_flag": "final_huber_weight_multiplier_below_one"
+  },
+  "quality_gates": {
+    "maximum_condition_number_source": "research_protocol.derived_params.maximum_condition_number",
+    "constraint_tolerance": 1e-10,
+    "attribution_identity_tolerance": 1e-10,
+    "expected_daily_r_squared_range": [0.30, 0.50]
+  },
+  "downstream_invalid_date_policy": "exclude",
+  "maximum_invalid_date_ratio_source": "research_protocol.derived_params.maximum_invalid_date_ratio"
+}

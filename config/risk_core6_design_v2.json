@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "design_id": "risk_core6_design_v2",
+  "status": "approved_design_inactive",
+  "active": false,
+  "approval": {
+    "date": "2026-09-17",
+    "user_instruction": "可以按照这里来，加入中期动量",
+    "scope": "bounded_candidate_structure_amendment_and_medium_term_momentum",
+    "base_protocol": "risk_set_versioning_v1",
+    "not_a_claim_of_normal_upgrade_trigger": true,
+    "production_promotion_authorized": false
+  },
+  "parent_risk_set_version": 1,
+  "risk_set_version": null,
+  "risk_basis_id": null,
+  "proposed_risk_set_version": 2,
+  "registration_status": "pending_role_and_lineage_audit",
+  "members": [
+    "country",
+    "industry_sw1",
+    "size",
+    "beta",
+    "residual_volatility",
+    "liquidity",
+    "nonlinear_size",
+    "momentum"
+  ],
+  "style_order": [
+    "size",
+    "beta",
+    "residual_volatility",
+    "liquidity",
+    "nonlinear_size",
+    "momentum"
+  ],
+  "industry_columns": [
+    "risk_industry_801010_SI",
+    "risk_industry_801030_SI",
+    "risk_industry_801040_SI",
+    "risk_industry_801050_SI",
+    "risk_industry_801080_SI",
+    "risk_industry_801110_SI",
+    "risk_industry_801120_SI",
+    "risk_industry_801130_SI",
+    "risk_industry_801140_SI",
+    "risk_industry_801150_SI",
+    "risk_industry_801160_SI",
+    "risk_industry_801170_SI",
+    "risk_industry_801180_SI",
+    "risk_industry_801200_SI",
+    "risk_industry_801210_SI",
+    "risk_industry_801230_SI",
+    "risk_industry_801710_SI",
+    "risk_industry_801720_SI",
+    "risk_industry_801730_SI",
+    "risk_industry_801740_SI",
+    "risk_industry_801750_SI",
+    "risk_industry_801760_SI",
+    "risk_industry_801770_SI",
+    "risk_industry_801780_SI",
+    "risk_industry_801790_SI",
+    "risk_industry_801880_SI",
+    "risk_industry_801890_SI",
+    "risk_industry_801950_SI",
+    "risk_industry_801960_SI",
+    "risk_industry_801970_SI",
+    "risk_industry_801980_SI"
+  ],
+  "expanded_columns": [
+    "risk_country",
+    "risk_industry_801010_SI",
+    "risk_industry_801030_SI",
+    "risk_industry_801040_SI",
+    "risk_industry_801050_SI",
+    "risk_industry_801080_SI",
+    "risk_industry_801110_SI",
+    "risk_industry_801120_SI",
+    "risk_industry_801130_SI",
+    "risk_industry_801140_SI",
+    "risk_industry_801150_SI",
+    "risk_industry_801160_SI",
+    "risk_industry_801170_SI",
+    "risk_industry_801180_SI",
+    "risk_industry_801200_SI",
+    "risk_industry_801210_SI",
+    "risk_industry_801230_SI",
+    "risk_industry_801710_SI",
+    "risk_industry_801720_SI",
+    "risk_industry_801730_SI",
+    "risk_industry_801740_SI",
+    "risk_industry_801750_SI",
+    "risk_industry_801760_SI",
+    "risk_industry_801770_SI",
+    "risk_industry_801780_SI",
+    "risk_industry_801790_SI",
+    "risk_industry_801880_SI",
+    "risk_industry_801890_SI",
+    "risk_industry_801950_SI",
+    "risk_industry_801960_SI",
+    "risk_industry_801970_SI",
+    "risk_industry_801980_SI",
+    "risk_size",
+    "risk_beta",
+    "risk_residual_volatility",
+    "risk_liquidity",
+    "risk_nonlinear_size",
+    "risk_momentum"
+  ],
+  "expanded_factor_count": 38,
+  "diagnostic_metadata_only": [
+    "listing_age",
+    "board",
+    "index_membership"
+  ],
+  "inherited_file_hashes": {
+    "RISK_SET_VERSION_PROPOSAL_20260917.md": "bd7108af037069ee595cdc848ff52e7582c47cf859380c33639fb1ce5e3b2f86",
+    "RISK_SET_DATA_GAPS_20260917.md": "e83460089ac58dfb5e1a7cd648e06584c076ff8d3872789d0f0278d8289f9ca7",
+    "reports/risk_set_design_review_v1/REVIEW_MANIFEST.json": "d2399ca2e861b195bd1f07824fd8391c148fb53f108173984531e1c04ac8ca2b",
+    "config/risk_factor_set_candidate_v1.json": "c8273ec0595ca48acd536379982144d71cd722f1a468ce62e35304331f869c6e",
+    "config/risk_descriptor_parameters_v1.json": "9b522b20b990f442ad1058dfe75d3ae3df301f1124ec64553d7a9c3e150b13a1",
+    "config/risk_set_expansion_v1.json": "4984a57e21122d54bdb3ccbeae8f7c473440dfd9be6c983d5290deb867d2cfc4",
+    "config/risk_set_versioning_v1.json": "e728eb040112e3c62a9561b70fd49a28b39a88ba514e46d0022a807659461ed9",
+    "config/alpha_risk_migration_protocol_v1.json": "a49db7d9621ecd12735dd33383d126625ae7fc232dd75b11c0efaaba82a59555",
+    "config/weight_metric_contract_v1.json": "6a947ecc657c9bba594a7ac21dca321aad8a246d1a4673498906227c31e3ec7f"
+  },
+  "legacy_style_definitions": {
+    "source": "config/risk_descriptor_parameters_v1.json",
+    "size": "ln(float_mkt_cap)",
+    "beta_benchmark": "board_benchmark_daily",
+    "transform_policy": "unchanged_from_v1_with_explicit_per_cell_provenance",
+    "orthogonalize_after": {
+      "size": [],
+      "beta": [
+        "size"
+      ],
+      "residual_volatility": [
+        "size",
+        "beta"
+      ],
+      "liquidity": [
+        "size"
+      ],
+      "nonlinear_size": [
+        "size"
+      ]
+    }
+  },
+  "momentum": {
+    "feature_id": "momentum",
+    "feature_version": 1,
+    "family_root_id": "momentum",
+    "role": "basis",
+    "bettable": false,
+    "formula_expr": "product(1 + total_return[t-k], k=21..251 inclusive, valid observed sessions only) - 1",
+    "window": {
+      "nearest_lag": 21,
+      "farthest_lag": 251,
+      "minimum_observations": 200
+    },
+    "units": "decimal_cumulative_return_not_annualized",
+    "calendar_policy": "complete_common_exchange_window",
+    "missing_policy": "observed_product_no_fill_no_rescale",
+    "resumption_policy": "exclude_with_count",
+    "invalid_return_policy": "raw_unavailable",
+    "total_loss_return_policy": "minus_one_is_valid",
+    "orthogonalize_after": [
+      "size",
+      "beta"
+    ],
+    "cross_sectional_transform": "inherit_v1_after_raw_coverage_audit",
+    "implementation": "src-python/factor_matrix/calculation/l1/momentum.py",
+    "availability_policy": "explicit_timezone_aware_available_at_backed_by_observed_or_conservative_first_seen",
+    "historical_probe_policy": "retain_existing_probe_and_costs; no_implicit_role_migration_or_zero_attempt_claim"
+  },
+  "paired_validation": {
+    "start": "2023-02-01",
+    "end": "2025-02-28",
+    "minimum_common_warmup_observations": 60,
+    "horizon_sessions": 1,
+    "old_and_new_reestimated": true,
+    "same_inputs_universe_clock_weights_estimator": true,
+    "seed_change_allowed": false,
+    "threshold_change_allowed": false,
+    "automatic_drop_momentum_allowed": false,
+    "holdout_start": "2025-03-01"
+  },
+  "release_conditions": [
+    "registered_distinct_basis_and_risk_set",
+    "verified_input_availability_and_source_hashes",
+    "new_L1_and_G3_fit_not_sliced_old_outputs",
+    "real_F_Delta_and_stratified_calibration",
+    "existing_G6_release_checks"
+  ],
+  "implementation_status": {
+    "raw_momentum": "implemented_opt_in",
+    "new_full_L1_G3": "pending",
+    "real_covariance_calibration": "pending",
+    "production": "blocked"
+  }
+}

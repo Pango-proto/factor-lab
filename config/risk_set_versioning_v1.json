@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "protocol_id": "risk_set_versioning_v1",
+  "frozen_before_g6a": true,
+  "membership_table": "risk_set_member",
+  "risk_set_header_table": "risk_set",
+  "risk_set_status_source": "risk_set.status",
+  "feature_definition_table": "feature_registry",
+  "alpha_assertion_table": "alpha_assertion",
+  "research_attempt_table": "research_attempt",
+  "member_primary_key": ["risk_set_version", "feature_id", "feature_version"],
+  "alpha_primary_key": ["feature_id", "feature_version", "risk_set_version", "horizon_days"],
+  "cross_role_exclusion_key": ["feature_id", "risk_set_version"],
+  "frozen_risk_set_required_for_alpha": true,
+  "v2_allowed_triggers": [
+    "new institutional regime break registered in external_facts",
+    "preregistered stratified bias test fails for the required consecutive-quarter count",
+    "L5 attribution shows persistently excessive statistical-factor contribution under a frozen threshold",
+    "a genuinely new PIT data source becomes available"
+  ],
+  "required_consecutive_quarter_bias_failures": 2,
+  "forbidden_trigger": "any alpha IC, backtest return, portfolio performance, or dissatisfaction with an alpha result",
+  "model_correction_path": {
+    "allowed_trigger": "a reproducible lineage or metric-coherence defect independent of alpha results",
+    "required_action": "issue a new risk_basis_id, retain the risk_set_version when membership is unchanged, rerun L1/G2/G3 and all basis-scoped semantic probes, and publish immutable supersession records",
+    "current_registered_defect": "sqrt-cap L1 orthogonalization consumed by structural-pit G3"
+  },
+  "upgrade_cost": [
+    "recompute every alpha exposure under v2 and re-estimate every IC",
+    "mark all v1 IC conclusions superseded and never pool v1 and v2 results",
+    "do not reset research_attempt counts; maintain separate risk-set-scoped FDR views over the append-only ledger",
+    "do not move the holdout boundary",
+    "retain v1 artifacts and publish an immutable reconciliation"
+  ],
+  "feature_alpha_boundary_protocol": "config/alpha_risk_migration_protocol_v1.json",
+  "family_root_declaration_protocol": "config/family_root_declarations_v1.json",
+  "basis_to_bettable": {
+    "status": "forbidden",
+    "exception": "new_family_root_declaration_before_any_predictive_labels"
+  },
+  "alpha_to_basis": {
+    "status": "allowed_only_as_preregistered_riskification",
+    "requires_new_risk_set_version": true,
+    "requires_stale_and_recharge": true
+  }
+}

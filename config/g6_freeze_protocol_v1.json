@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g6_freeze_protocol_v1",
+  "frozen_at": "2026-08-16",
+  "decision_data_cutoff_inclusive": "2025-02-28",
+  "objective": "Freeze an internally coherent and auditable risk basis before any alpha result is allowed to influence risk-model membership.",
+  "alpha_stage_boundary": {
+    "registered_alpha_candidate_count_at_freeze": 0,
+    "future_alpha_neutralization_decisions_block_g6": false,
+    "future_registration_policy": "config/future_alpha_neutralization_policy_v1.json",
+    "rule": "G6 freezes only the risk model. Every future alpha candidate must explicitly decide beta, residual-volatility, liquidity, and listing-age neutralization; statistical-factor neutralization is forbidden because statistical directions live only in Delta; ALL_RISK is forbidden."
+  },
+  "split_gates": {
+    "G6a_basis_freeze": {
+      "freezes": ["risk column set", "J", "risk_set_version"],
+      "hard_prerequisites": [
+        "L1 exposure manifest contains the frozen weight_metric_contract and risk_basis_id",
+        "G2 independently recomputes orthogonality under the same regression-base artifact and passes",
+        "formal G3 risk_basis_id and risk_metric_id exactly match L1/G2",
+        "all semantic cost artifacts either match that risk_basis_id or are explicitly superseded"
+      ],
+      "unblocks": ["future alpha registration", "alpha exposure neutralization", "L2a IC and Fama-MacBeth evaluation", "L3 batch 1 rank_signal"],
+      "does_not_require": ["factor covariance acceptance", "specific variance acceptance", "bias test completion"]
+    },
+    "G6b_V_acceptance": {
+      "accepts": ["factor covariance F", "specific variance Delta", "stratified bias tests"],
+      "blocks_until_passed": ["L3 batch 2 risk-aware construction", "L4 optimizer comparison", "production risk forecasts"]
+    },
+    "parallelism": "After G6a, G5/G6b may run in parallel with pre-production alpha research; no optimizer or production risk use is allowed before G6b."
+  },
+  "freeze_layer_protocol": "config/risk_freeze_layers_v1.json",
+  "risk_set_versioning_protocol": "config/risk_set_versioning_v1.json",
+  "g4_termination_protocol": "config/g4_termination_rule_v1.json",
+  "acceptance_gates": {
+    "identities": {
+      "attribution_identity_error_maximum": 1e-10,
+      "constraint_error_maximum": 1e-10,
+      "invalid_or_rank_failed_dates": 0,
+      "base_weight_cross_metric_orthogonality_maximum": 1e-8,
+      "weight_metric_lineage_mismatch_count": 0
+    },
+    "bias_test": {
+      "overall_and_each_preregistered_stratum_interval": [0.91, 1.09],
+      "independent_axes": ["predicted_specific_risk_decile", "liquidity_decile"],
+      "hard_stop_if_high_risk_group_exceeds": 1.2
+    },
+    "factor_membership": {
+      "incremental_r2_minimum": 0.005,
+      "incremental_r2_primary_aggregation": "median_across_daily_values",
+      "factor_return_persistence_lag_days": 21,
+      "factor_return_persistence_minimum": 0.8,
+      "statistical_subspace_angle_maximum_degrees": 30.0,
+      "threshold_relaxation_after_results": "forbidden"
+    },
+    "known_residual_registry": {
+      "minimum_entries": 6,
+      "required_fields": ["id", "magnitude", "evidence", "reason_not_fixed", "disposition"],
+      "must_be_delivered_with_frozen_risk_set": true
+    }
+  },
+  "descriptive_expectations_non_decisional": {
+    "r_squared_statistic": "mean_of_daily_full_label_weighted_r_squared",
+    "final_r_squared_expected_range": [0.21, 0.24],
+    "final_r_squared_red_flag_above": 0.28,
+    "huber_downweight_rate_expected_range": [0.22, 0.25],
+    "huber_downweight_rate_suspicious_below": 0.20,
+    "downweight_r_squared_correlation_expected_range": [-0.25, -0.15],
+    "downweight_r_squared_correlation_red_flag_below": -0.35,
+    "condition_number_expected_maximum_for_44_column_X": 2200,
+    "condition_number_red_flag_above": 3000,
+    "statistical_factor_count_expected_range": [4, 7],
+    "risk_column_count_expected_range": [44, 44],
+    "statistical_factor_destination": "Delta_low_rank_covariance_only",
+    "decision_role": "diagnostic_and_investigation_trigger_not_membership_score"
+  },
+  "high_r_squared_semantic_overlap_probe": {
+    "trigger": "mean_daily_full_label_weighted_r_squared_above_0.28",
+    "required_checks": [
+      "cross_sectional_correlation_of_statistical_loadings_with_book_to_price",
+      "cross_sectional_correlation_of_statistical_loadings_with_12_minus_1_momentum"
+    ],
+    "default_interpretation": "suspect absorption of prospective economic dimensions before treating high R-squared as improvement",
+    "probe_status": "not_a_registered_alpha_not_an_alpha_return_test"
+  },
+  "required_delivery_artifacts": [
+    "frozen_risk_set_v1_with_per_factor_tests",
+    "g3_iteration_evidence_chain_v1",
+    "reconciliation_v1_full_chain",
+    "stratified_bias_test_v1",
+    "known_residual_registry_v1",
+    "secondary_guard_v1",
+    "decision_cutoff_machine_verification_v1",
+    "theme_observation_v1_before_L4"
+  ],
+  "g6_interpretation_statement": "A final mean daily weighted R-squared near 0.22 is the explicit price paid to keep value, momentum, growth, and earnings-yield available as alpha dimensions. It is not an incomplete attempt to reproduce a 0.30-plus Barra-style explanatory score."
+  ,"publication_semantics": {
+    "g6_action": "publish risk_set_version=1",
+    "not": "treat G6 as an abstract irreversible milestone without a versioned publication artifact",
+    "trigger": "publish immutable frozen risk-set manifest and update the risk-set current pointer",
+    "alpha_boundary": "no alpha candidate may be registered before risk_set_version=1 is published",
+    "v2_triggers": [
+      "risk column membership changes",
+      "J changes",
+      "weight_metric_contract changes",
+      "risk_basis_id changes",
+      "a termination clause is explicitly reopened under a new preregistered protocol"
+    ],
+    "v2_action": "issue new risk_basis_id, rerun L1/G2/G3 and basis-scoped gates, publish immutable supersession"
+  }
+}

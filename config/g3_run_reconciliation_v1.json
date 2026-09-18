@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "config_id": "g3_run_reconciliation_v1",
+  "minimum_factor_return_correlation": 0.99,
+  "minimum_specific_return_correlation": 0.99,
+  "require_identical_factor_axis": true,
+  "require_identical_specific_return_axis": true
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g4_termination_rule_v1",
+  "frozen_at": "2026-08-16",
+  "all_required": [
+    "all six member tests executed in preregistered order with decision records",
+    "every unresolved item recorded in known_residual_registry with magnitude",
+    "latest full rerun introduces no new problem category",
+    "risk basis membership and J are frozen in a versioned manifest"
+  ],
+  "explicitly_not_required": [
+    "R2 reaches a target",
+    "Huber downweight rate reaches the Gaussian reference",
+    "downweight-rate versus R2 correlation reaches -0.20",
+    "future per-alpha neutralization decisions are filled before any alpha exists"
+  ],
+  "problem_category_rule": "new instances of an already registered category do not prevent termination; a genuinely new category does"
+  ,"termination_clauses": {
+    "G4.1_weight": {
+      "decision": "pre_register_once",
+      "after_decision": "forbid_reselection",
+      "selection_feedback": "forbidden"
+    },
+    "G4.1b_liquidity": {
+      "decision": "classify_once_into_a_b_or_c",
+      "after_decision": "forbid_reclassification",
+      "selection_feedback": "forbidden"
+    },
+    "condition_number": {
+      "invalid_date_rule": "any_date_above_frozen_threshold_is_invalid",
+      "threshold": 4503.599627370496,
+      "invalid_share_threshold": "pre_registered_before_full_history_rerun",
+      "threshold_change": "forbidden"
+    },
+    "G4.2_membership": {
+      "candidate_order": ["size", "beta", "residual_volatility", "liquidity", "nonlinear_size", "listing_age"],
+      "evaluation_policy": "run_once_in_pre_registered_order",
+      "greedy_delta_r2_selection": "forbidden",
+      "backtracking": "forbidden"
+    },
+    "G4.3_residual_correlation": {
+      "policy": "use_existing_registered_escape_hatch",
+      "new_escape_hatch_search": "forbidden"
+    },
+    "G4.4_listing_age": {
+      "evaluation_count": 1,
+      "non_significant_disposition": "remove_from_candidate_set",
+      "segmentation_tuning": "forbidden"
+    },
+    "statistical_factors": {
+      "completed_rounds": 0,
+      "destination": "Delta_low_rank_covariance_only",
+      "iteration_required": false,
+      "additional_rounds": "not_applicable_unless_new_covariance_problem_category_is_registered"
+    }
+  }
+}

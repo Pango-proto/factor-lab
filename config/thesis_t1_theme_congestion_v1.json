@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "thesis_id": "T1",
+  "version": 1,
+  "status": "blocked_definition_and_historical_pit_data",
+  "pre_label": true,
+  "registered_at": "2026-08-17",
+  "statement": "Consensus strength increases theme crowding, which weakens stock-level momentum, trend, and reversal predictability.",
+  "state_variable": {
+    "id": "theme_congestion_v1",
+    "definition_status": "proposed_not_frozen",
+    "formula": "C_t = median_theta(mean_pairwise_Spearman_corr_21d_prior_returns(theta,t))",
+    "theme_universe": "PIT theme-membership snapshot available at decision timestamp t",
+    "theme_member_minimum": 10,
+    "theme_member_maximum": 200,
+    "return_window": "strictly prior 21 trading-day returns ending at t-1",
+    "theme_aggregation": "equal-weighted median across eligible themes",
+    "regime_definition": {
+      "high": "C_t >= expanding_prior_252_trading_day_70th_percentile",
+      "low": "C_t <= expanding_prior_252_trading_day_30th_percentile",
+      "neutral": "otherwise"
+    },
+    "episode_definition": "maximal contiguous high or low regime run with at least 5 trading days",
+    "minimum_independent_episodes": 20
+  },
+  "joint_predictions": {
+    "P1": "Momentum IC in high-congestion episodes is lower than in low-congestion episodes.",
+    "P2": "Trend and reversal show the same signed high-minus-low regime difference as momentum.",
+    "P3": "The regime difference is monotone non-increasing across ordered congestion regimes.",
+    "P4": "A non-theme valuation alpha is unaffected: its high-minus-low regime difference remains practically equivalent to zero."
+  },
+  "alpha_projection": {
+    "hypothesis_source": "T1 joint_predictions",
+    "required_fields": ["thesis_ref", "thesis_role"],
+    "thesis_roles": ["supporting_P1", "supporting_P2", "supporting_P3", "control_P4"]
+  },
+  "power_gate": {
+    "episode_count_field": "independent_episode_count",
+    "minimum_required": 20,
+    "below_minimum_action": "insufficient_power_do_not_test"
+  },
+  "registration_blockers": [
+    "Historical PIT theme-membership history is unavailable; current snapshots cannot reconstruct C_t.",
+    "P4 practical-equivalence margin must be frozen before registration.",
+    "Independent episode count cannot be computed until the PIT state series exists."
+  ],
+  "known_evidence": {
+    "registry": "config/g6_known_residual_registry_v1.json",
+    "entry_id": "theme_dimension_has_no_historical_pit_probe"
+  },
+  "forbidden_actions": [
+    "Use the 2026-08-14 current concept snapshot as historical membership.",
+    "Register or evaluate T1 with forward-filled theme membership.",
+    "Compute an episode count from a non-PIT proxy and treat it as power evidence."
+  ]
+}

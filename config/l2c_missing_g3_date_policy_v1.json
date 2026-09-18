@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "policy_id": "l2c_missing_g3_date_policy_v1",
+  "registered_at": "2026-08-16",
+  "trigger": "G3 trade date is invalid or has no published factor-return vector",
+  "factor_covariance_ewma": {
+    "action": "skip_state_update",
+    "effective_observation_clock": "do_not_advance",
+    "half_life_unit": "valid_G3_factor_return_observations",
+    "carry_forward_last_covariance_forecast": true,
+    "treat_missing_factor_return_as_zero": false
+  },
+  "specific_variance_ewma": {
+    "action": "skip_state_update_for_missing_specific_return",
+    "effective_observation_clock": "per_asset_valid_specific_return_observations",
+    "treat_missing_specific_return_as_zero": false
+  },
+  "threshold_or_result_dependency": "none_preregistered_before_G5",
+  "change_after_G5_results": "forbidden_without_new_model_version"
+}

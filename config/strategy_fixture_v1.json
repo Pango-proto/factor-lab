@@ -1,0 +1,463 @@
+{
+  "contract_id": "strategy_fixture_v1",
+  "purpose": "engineering_fixture_only",
+  "real_cost_verified": false,
+  "initial_cash": "10000.00",
+  "strategy": {
+    "strategy_id": "rank_long_only_fixture_v1",
+    "top_n": 1,
+    "gross_target": "0.80",
+    "rebalance": "each_explicit_session",
+    "tie_break": "asset_id_ascending",
+    "missing_all": "hold_existing",
+    "signal_freshness": "same_session_only",
+    "lot_size": 10,
+    "limit_price": "decision_reference_price",
+    "execution": "sell_then_buy_actual_cash_cap",
+    "unfilled": "cancel_before_close"
+  },
+  "fee_policy": {
+    "commission_rate": "0.0001854",
+    "minimum_commission_cny": "5.00",
+    "charge_aggregation": "cumulative_per_order_fixture_assumption",
+    "rounding": "CNY_cent_half_up_fixture_assumption",
+    "other_fees": "excluded_unverified_not_a_real_total_cost",
+    "settlement": "explicit_sellable_at_per_fill_fixture_assumption",
+    "split_open_orders": "cancel_fixture_assumption",
+    "dividend": "record_receivable_then_pay_gross_fixture_assumption"
+  },
+  "signals": [
+    {
+      "signal_id": "s1:FIXTURE.SH",
+      "session": "2001-01-01",
+      "asset_id": "FIXTURE.SH",
+      "value": "2",
+      "eligible": true,
+      "observed_at": "2001-01-01T09:00:00+00:00",
+      "available_at": "2001-01-01T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s1:FIXTURE.SZ",
+      "session": "2001-01-01",
+      "asset_id": "FIXTURE.SZ",
+      "value": "1",
+      "eligible": true,
+      "observed_at": "2001-01-01T09:00:00+00:00",
+      "available_at": "2001-01-01T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s2:FIXTURE.SH",
+      "session": "2001-01-02",
+      "asset_id": "FIXTURE.SH",
+      "value": "1",
+      "eligible": true,
+      "observed_at": "2001-01-02T09:00:00+00:00",
+      "available_at": "2001-01-02T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s2:FIXTURE.SZ",
+      "session": "2001-01-02",
+      "asset_id": "FIXTURE.SZ",
+      "value": "2",
+      "eligible": true,
+      "observed_at": "2001-01-02T09:00:00+00:00",
+      "available_at": "2001-01-02T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s3:FIXTURE.SH",
+      "session": "2001-01-03",
+      "asset_id": "FIXTURE.SH",
+      "value": "1",
+      "eligible": true,
+      "observed_at": "2001-01-03T09:00:00+00:00",
+      "available_at": "2001-01-03T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s3:FIXTURE.SZ",
+      "session": "2001-01-03",
+      "asset_id": "FIXTURE.SZ",
+      "value": "2",
+      "eligible": true,
+      "observed_at": "2001-01-03T09:00:00+00:00",
+      "available_at": "2001-01-03T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s4:FIXTURE.SH",
+      "session": "2001-01-04",
+      "asset_id": "FIXTURE.SH",
+      "value": "2",
+      "eligible": true,
+      "observed_at": "2001-01-04T09:00:00+00:00",
+      "available_at": "2001-01-04T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s4:FIXTURE.SZ",
+      "session": "2001-01-04",
+      "asset_id": "FIXTURE.SZ",
+      "value": "2",
+      "eligible": true,
+      "observed_at": "2001-01-04T09:00:00+00:00",
+      "available_at": "2001-01-04T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s5:FIXTURE.SH",
+      "session": "2001-01-05",
+      "asset_id": "FIXTURE.SH",
+      "value": "999",
+      "eligible": true,
+      "observed_at": "2001-01-05T09:00:00+00:00",
+      "available_at": "2001-01-06T09:30:00+00:00"
+    },
+    {
+      "signal_id": "s5:FIXTURE.SZ",
+      "session": "2001-01-05",
+      "asset_id": "FIXTURE.SZ",
+      "value": null,
+      "eligible": true,
+      "observed_at": "2001-01-05T09:00:00+00:00",
+      "available_at": "2001-01-05T09:30:00+00:00"
+    }
+  ],
+  "sessions": [
+    {
+      "session": "2001-01-01",
+      "decision_time": "2001-01-01T10:00:00+00:00",
+      "sell_submit_time": "2001-01-01T10:01:00+00:00",
+      "sell_execution_time": "2001-01-01T11:00:00+00:00",
+      "buy_submit_time": "2001-01-01T12:00:00+00:00",
+      "buy_execution_time": "2001-01-01T13:00:00+00:00",
+      "cancel_time": "2001-01-01T15:00:00+00:00",
+      "close_time": "2001-01-01T16:00:00+00:00",
+      "decision_quotes": {
+        "FIXTURE.SH": {
+          "price": "10.00",
+          "observed_at": "2001-01-01T09:59:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-01T09:59:00+00:00"
+        }
+      },
+      "close_quotes": {
+        "FIXTURE.SH": {
+          "price": "10.00",
+          "observed_at": "2001-01-01T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-01T16:00:00+00:00"
+        }
+      },
+      "opportunities": {
+        "sell": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-01T11:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-02T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-01T11:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-02T00:00:00+00:00"
+          }
+        },
+        "buy": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-01T13:00:00+00:00",
+            "price": "10.00",
+            "capacity": 300,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-02T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-01T13:00:00+00:00",
+            "price": "10.00",
+            "capacity": 300,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-02T00:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "session": "2001-01-02",
+      "decision_time": "2001-01-02T10:00:00+00:00",
+      "sell_submit_time": "2001-01-02T10:01:00+00:00",
+      "sell_execution_time": "2001-01-02T11:00:00+00:00",
+      "buy_submit_time": "2001-01-02T12:00:00+00:00",
+      "buy_execution_time": "2001-01-02T13:00:00+00:00",
+      "cancel_time": "2001-01-02T15:00:00+00:00",
+      "close_time": "2001-01-02T16:00:00+00:00",
+      "decision_quotes": {
+        "FIXTURE.SH": {
+          "price": "10.00",
+          "observed_at": "2001-01-02T09:59:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-02T09:59:00+00:00"
+        }
+      },
+      "close_quotes": {
+        "FIXTURE.SH": {
+          "price": "10.00",
+          "observed_at": "2001-01-02T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-02T16:00:00+00:00"
+        }
+      },
+      "opportunities": {
+        "sell": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-02T11:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": true,
+            "side_blocked": false,
+            "sellable_at": "2001-01-03T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-02T11:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-03T00:00:00+00:00"
+          }
+        },
+        "buy": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-02T13:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-03T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-02T13:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-03T00:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "session": "2001-01-03",
+      "decision_time": "2001-01-03T10:00:00+00:00",
+      "sell_submit_time": "2001-01-03T10:01:00+00:00",
+      "sell_execution_time": "2001-01-03T11:00:00+00:00",
+      "buy_submit_time": "2001-01-03T12:00:00+00:00",
+      "buy_execution_time": "2001-01-03T13:00:00+00:00",
+      "cancel_time": "2001-01-03T15:00:00+00:00",
+      "close_time": "2001-01-03T16:00:00+00:00",
+      "decision_quotes": {
+        "FIXTURE.SH": {
+          "price": "10.00",
+          "observed_at": "2001-01-03T09:59:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-03T09:59:00+00:00"
+        }
+      },
+      "close_quotes": {
+        "FIXTURE.SH": {
+          "price": "8.00",
+          "observed_at": "2001-01-03T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-03T16:00:00+00:00"
+        }
+      },
+      "opportunities": {
+        "sell": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-03T11:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": true,
+            "sellable_at": "2001-01-04T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-03T11:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-04T00:00:00+00:00"
+          }
+        },
+        "buy": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-03T13:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-04T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-03T13:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-04T00:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "session": "2001-01-04",
+      "decision_time": "2001-01-04T10:00:00+00:00",
+      "sell_submit_time": "2001-01-04T10:01:00+00:00",
+      "sell_execution_time": "2001-01-04T11:00:00+00:00",
+      "buy_submit_time": "2001-01-04T12:00:00+00:00",
+      "buy_execution_time": "2001-01-04T13:00:00+00:00",
+      "cancel_time": "2001-01-04T15:00:00+00:00",
+      "close_time": "2001-01-04T16:00:00+00:00",
+      "decision_quotes": {
+        "FIXTURE.SH": {
+          "price": "8.00",
+          "observed_at": "2001-01-04T09:59:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-04T09:59:00+00:00"
+        }
+      },
+      "close_quotes": {
+        "FIXTURE.SH": {
+          "price": "8.00",
+          "observed_at": "2001-01-04T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-04T16:00:00+00:00"
+        }
+      },
+      "opportunities": {
+        "sell": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-04T11:00:00+00:00",
+            "price": "8.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-05T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-04T11:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-05T00:00:00+00:00"
+          }
+        },
+        "buy": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-04T13:00:00+00:00",
+            "price": "8.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-05T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-04T13:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-05T00:00:00+00:00"
+          }
+        }
+      }
+    },
+    {
+      "session": "2001-01-05",
+      "decision_time": "2001-01-05T10:00:00+00:00",
+      "sell_submit_time": "2001-01-05T10:01:00+00:00",
+      "sell_execution_time": "2001-01-05T11:00:00+00:00",
+      "buy_submit_time": "2001-01-05T12:00:00+00:00",
+      "buy_execution_time": "2001-01-05T13:00:00+00:00",
+      "cancel_time": "2001-01-05T15:00:00+00:00",
+      "close_time": "2001-01-05T16:00:00+00:00",
+      "decision_quotes": {
+        "FIXTURE.SH": {
+          "price": "8.00",
+          "observed_at": "2001-01-05T09:59:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-05T09:59:00+00:00"
+        }
+      },
+      "close_quotes": {
+        "FIXTURE.SH": {
+          "price": "8.00",
+          "observed_at": "2001-01-05T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-05T16:00:00+00:00"
+        }
+      },
+      "opportunities": {
+        "sell": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-05T11:00:00+00:00",
+            "price": "8.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-06T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-05T11:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-06T00:00:00+00:00"
+          }
+        },
+        "buy": {
+          "FIXTURE.SH": {
+            "quote_time": "2001-01-05T13:00:00+00:00",
+            "price": "8.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-06T00:00:00+00:00"
+          },
+          "FIXTURE.SZ": {
+            "quote_time": "2001-01-05T13:00:00+00:00",
+            "price": "10.00",
+            "capacity": 10000,
+            "halted": false,
+            "side_blocked": false,
+            "sellable_at": "2001-01-06T00:00:00+00:00"
+          }
+        }
+      }
+    }
+  ]
+}

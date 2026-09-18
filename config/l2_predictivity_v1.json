@@ -1,0 +1,67 @@
+{
+  "config_id": "l2_predictivity_v1",
+  "version": 1,
+  "reported_horizons_days": [1, 5, 10, 20, 40, 60],
+  "scoring_horizon_policy": "alpha_assertion.horizon_days",
+  "minimum_burn_in_days_source": "research_protocol.derived_params.burn_in_days",
+  "expanding_window": true,
+  "embargo_days": 20,
+  "cross_validation": {
+    "splitter": "purged_k_fold",
+    "folds": 5,
+    "purge_by_factor_horizon": true
+  },
+  "correlation_method": "spearman",
+  "coefficient_estimator": "fama_macbeth_nw",
+  "newey_west_lag_policy": "horizon_minus_one",
+  "factor_weight_estimator": "diagonal_icir",
+  "shrinkage": {
+    "method": "normal_prior",
+    "prior_precision_source": "research_protocol.frozen_choices.shrinkage_prior_precision"
+  },
+  "fdr": {
+    "method": "benjamini_hochberg",
+    "q_source": "research_protocol.frozen_choices.fdr_q",
+    "denominator": "count_research_attempt_by_family_root_including_unsubmitted"
+  },
+  "allowed_preregistered_groups": [
+    "market_cap_quantile",
+    "liquidity_quantile",
+    "board",
+    "market_volatility_regime"
+  ],
+  "snapshot_frequency": "quarterly",
+  "holdout_gate": "downgrade_if_ever_touched"
+  ,"neutralization_fidelity": {
+    "required_when_neutralize_against_is_nonempty": true,
+    "label_access_count": "one_audited_event_for_raw_and_neutralized_outputs",
+    "metric": "absolute_shrunk_ic_retention_ratio",
+    "minimum_absolute_raw_ic": 0.005,
+    "minimum_retention_ratio": 0.30,
+    "sign_flip": "automatic_degrade",
+    "threshold_change_after_results": "forbidden"
+  },
+  "factor_evaluation_snapshot": {
+    "single_audited_label_access_event": true,
+    "required_outputs": ["raw_ic", "neutralized_ic", "neutralization_retention", "incremental_ic"],
+    "variant_count_charge": 1,
+    "variant_count_accounting_point": "research_attempt_issuance_before_label_access; one attempt per preregistered evaluation, including unsubmitted attempts",
+    "semantic_probe_ledger_forbidden": true
+  },
+  "incremental_alpha_gate": {
+    "required_for_new_alpha": true,
+    "control": "previously_frozen_incumbent_composite_exposure",
+    "composite_weights_must_predate_candidate_event": true,
+    "residualization_metric": "weight_metric_contract_v1.regression_base_weight",
+    "output": "rolling_incremental_shrunk_ic",
+    "decision": "significantly_nonzero_under_preregistered_joint_admission_rule",
+    "same_audited_label_access_event_as_main_ic": true
+  },
+  "tail_risk_exposure_diagnostic": {
+    "required": true,
+    "groups": ["alpha_decile_1", "alpha_decile_10", "top_n", "bottom_n"],
+    "risk_columns": "referenced_frozen_risk_set",
+    "report_weightings": ["equal", "regression_base_weight"],
+    "decision_role": "diagnostic_until_thresholds_are_preregistered"
+  }
+}

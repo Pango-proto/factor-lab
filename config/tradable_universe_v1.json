@@ -1,0 +1,9 @@
+{
+  "exclude_st": true,
+  "exclude_suspended": true,
+  "include_bse": true,
+  "industry_level": "L2",
+  "industry_standard": "SW2021",
+  "market_cap_field": "float_mkt_cap",
+  "min_listing_trading_days": 120
+}

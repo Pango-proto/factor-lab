@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "config_id": "risk_descriptor_parameters_v1",
+  "definitions": {
+    "beta": {
+      "lookback_days": 120,
+      "minimum_observations": 60,
+      "benchmark": "board_benchmark_daily"
+    },
+    "residual_volatility": {
+      "lookback_days": 120,
+      "minimum_observations": 60,
+      "benchmark": "board_benchmark_daily"
+    },
+    "liquidity": {
+      "lookback_days": 20,
+      "minimum_observations": 12,
+      "aggregation": "mean_turnover_rate"
+    },
+    "nonlinear_size": {
+      "power": 3,
+      "operation_order": [
+        "winsorize_size",
+        "standardize_size",
+        "power_transform",
+        "orthogonalize_against_size",
+        "weighted_scale_only"
+      ]
+    },
+    "listing_age": {
+      "development_transform": "log1p_calendar_days_since_exchange_list",
+      "calendar_age_source": "canonical_definitions.listing_age_calendar_days",
+      "d0_filter_age_source": "tradable_universe_v1.days_since_exchange_list",
+      "units_are_intentionally_distinct": true,
+      "formal_shape_source": "risk_factor_set_candidate_v1.candidate_specific_tests.listing_age.decision_rule",
+      "support_boundary_source": "new_listing_policy_v1.d_star_reference.values",
+      "shape_not_selected_until_g4": true
+    }
+  }
+}

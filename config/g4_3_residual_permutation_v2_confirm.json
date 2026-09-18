@@ -1,0 +1,32 @@
+{
+  "schema_version": 2,
+  "protocol_id": "g4_3_residual_permutation_v2",
+  "status": "draft",
+  "purpose": "Fixed-rule confirmation smoke test; same panel and asset sample as v2 smoke, only n_permutations increases to 1000.",
+  "input_run_id": "g3_risk_only_history_20260814_738ce557aa737078",
+  "groupings": ["index_CSI300", "index_CSI500"],
+  "negative_controls": ["industry", "board"],
+  "winsor_mad_k": 5.0,
+  "min_group_size": 20,
+  "min_effective_days": 20,
+  "fdr_q": 0.05,
+  "date_start": "2026-05-22",
+  "date_end": "2026-08-14",
+  "max_assets": 480,
+  "asset_sampling": "balanced_by_board",
+  "industry_label_change_policy": "reject",
+  "max_changed_asset_fraction": 0.01,
+  "statistic": {
+    "name": "q_ratio",
+    "minimum_observations_per_day": 5
+  },
+  "permutation": {
+    "strata_definition": "daily PIT risk_size decile x risk_liquidity quintile",
+    "seed": 20260817,
+    "n_permutations": 1000
+  },
+  "negative_control_gate": {
+    "controls": ["industry", "board"],
+    "control_band": [0.8, 1.25]
+  }
+}

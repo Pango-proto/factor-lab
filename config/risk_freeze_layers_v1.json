@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "protocol_id": "risk_freeze_layers_v1",
+  "layers": {
+    "basis": {"strength":"strong","contents":["risk column set","J","risk_set_version","numeric exposure basis","orthogonalization metric binding"],"change_rule":"new risk_basis_id; recompute L1/G2/G3 and supersede all alpha and semantic artifacts tied to the old basis"},
+    "estimator": {"strength":"medium","contents":["Huber","regression-only WLS that does not alter exposure geometry","factor covariance","specific variance","half lives","shrinkage"],"change_rule":"rerun plus reconciliation; downstream recompute when frozen correlation threshold is breached"},
+    "diagnostic_ruler": {"strength":"weak","contents":["incremental R2 aggregation","bias strata","report ordering"],"change_rule":"version the ruler before use; never change thresholds after seeing the governed result"}
+  }
+}

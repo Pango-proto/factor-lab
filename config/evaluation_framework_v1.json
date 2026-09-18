@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "framework_id": "estimation_evaluation_v1",
+  "status": "active",
+  "component_declaration": {
+    "component": "estimation_alpha_evaluation_framework",
+    "protects": "estimation 区间内 Alpha 信号有效性与可实现性判断",
+    "failure_mode": "前视泄漏、日期错位、重叠标签导致的显著性高估与不可交易收益混入",
+    "downstream_consequence": "任一强制负对照失败时，禁止使用主检验结果推进评分、优化器或风险集验收"
+  },
+  "sample": {
+    "development_start": "2019-10-08",
+    "holdout_start": "2025-03-01",
+    "holdout_status": "sealed_unopened",
+    "horizon_unit": "trading_days",
+    "reported_horizons": [1, 3, 5, 10, 20],
+    "primary_horizon": 5,
+    "embargo_trading_days": 5,
+    "purge_gap_rule": "max(reported_horizons) + embargo_trading_days",
+    "purge_gap_trading_days": 25
+  },
+  "signal": {
+    "signal_id": "reversal_20d_v1",
+    "definition": "-(product(1 + total_return[t-19:t]) - 1), minimum 15 valid observations",
+    "role": "dense_framework_validation_probe_not_deployable",
+    "risk_neutralization": [
+      "country",
+      "industry_sw1",
+      "board",
+      "size",
+      "beta",
+      "residual_volatility",
+      "liquidity",
+      "nonlinear_size",
+      "listing_age"
+    ]
+  },
+  "evaluation_channel": {
+    "neutralization_weight_metric": "equal_weight_ols",
+    "ic_neutralization_sides": "signal_only",
+    "risk_exposure_column_set_id": "risk_set_candidate_v1_minus_index_membership",
+    "risk_set_version": 1,
+    "risk_set_status": "candidate",
+    "singular_value_rcond": 1e-10,
+    "signal_lookback_trading_days": 20,
+    "alignment_decay_side_span": 2,
+    "declared_direction": 1,
+    "ic_statistic": "spearman",
+    "time_shuffle_repetitions": 100,
+    "variant_dispositions": {
+      "within_date_cross_sectional_return_shuffle": "gate",
+      "within_asset_time_shuffle_raw": "sensitivity_only",
+      "within_asset_time_shuffle_demeaned": "gate",
+      "date_axis_shuffle": "gate",
+      "label_window_shift": "gate",
+      "raw_signal_shift": "sensitivity_only",
+      "label_window_shift_wide": "sensitivity_only",
+      "raw_signal_shift_wide": "sensitivity_only",
+      "shifted_exposure": "diagnostic"
+    },
+    "singular_value_safety": {
+      "min_sigma_min_true_ratio": 0.012508307854687688,
+      "max_sigma_max_noise_ratio": 7.337956357500689e-15,
+      "rcond_used": 1e-10,
+      "worst_case_condition_number": 79.94685142216356,
+      "risk_design_condition_policy_maximum": 4503.599627370496,
+      "risk_design_condition_policy_passed": true,
+      "verified": true,
+      "evidence": "3b 9-member dual-regime singular-value audit"
+    },
+    "variant_rationales": {
+      "shifted_exposure": "Exposure columns for industry, board, size, and listing age are highly persistent across adjacent dates. A one-day shift perturbs the design matrix less than the resolution of the neutralization itself, so this shift has no identification power at the registered offset. The limitation is structural and independent of column set and calibration; date-key alignment is asserted separately.",
+      "raw_signal_shift": "Under signal-date exposure binding, raw signal shifts are the exact date-shift image of label-window shifts. It is retained as a sensitivity curve but is not an independent gate."
+    },
+    "required_daily_panel_diagnostics": [
+      "n_configured",
+      "n_physical_retained",
+      "exposure_rank",
+      "constraint_block_rank",
+      "sigma_min_true_ratio",
+      "sigma_max_noise_ratio",
+      "rcond_used"
+    ],
+    "known_residuals": {
+      "within_asset_shuffle_null_center_uncalibrated": {
+        "magnitude": {},
+        "computed_under": "superseded_calibration",
+        "reason_not_fixed": "Null center is a function of sample length, cross-sectional dispersion of asset mean labels, and the projection basis; it has no data-independent zero point. Implementation divergence, support-set misalignment, and compute-path defects were excluded. The remaining residual is an approximately 2x calibration gap in the rank-space analytic decomposition; the leading hypothesis is double application of an attenuation factor.",
+        "disposition": "sensitivity_only",
+        "power_note": "The daily-shape criterion was underpowered by construction and must not be read as refutation."
+      }
+    }
+  },
+  "negative_controls": {
+    "seed": 20260818,
+    "time_shuffle_repetitions": 100,
+    "zero_threshold_standard_errors": 2.0,
+    "required": [
+      "within_date_cross_sectional_return_shuffle",
+      "label_window_shift_peak_at_zero",
+      "raw_signal_shift_peak_at_zero",
+      "within_asset_demeaned_time_shuffle_null_distribution_contains_zero"
+    ],
+    "time_shuffle_gate": "先去除每只股票在估计区间的标签均值，再做 100 次逐股票独立时序置换；所得 mean daily IC 的 2.5%-97.5% 区间必须包含 0",
+    "raw_within_asset_time_shuffle_role": "保留股票长期截面均值的持久结构诊断，不作为纯时序对齐门",
+    "alignment_shift_offsets_trading_days": [-2, -1, 0, 1, 2],
+    "label_window_shift_expectation": "收益窗口整体平移；IC 必须在 0 处取峰，并从 0 向两侧非递增",
+    "raw_signal_shift_expectation": "未中性化原始信号按统一交易日平移；IC 必须在 0 处取峰，并从 0 向两侧非递增",
+    "risk_exposure_shift_interpretation": "仅作为中性化强度敏感性诊断；不参与对齐门或 T3 阻断"
+  },
+  "construction_gates": {
+    "T3_next_day_execution_filter": {
+      "status": "completed",
+      "unblocked_by": "reversal_20d A/B 对齐门、截面打乱门、逐股票去均值 100 次时序置换门全部通过",
+      "execution_date_rule": "信号日的下一个统一市场交易日",
+      "liquidity_floor": "信号日成交额截面 20% 分位；B 类开发期选择，必须做分位敏感性",
+      "listing_age_rule": "按 board × registration regime 使用 new_listing_policy_v1.d_star_reference，不使用固定 120 日",
+      "evidence": "data/diagnostics/evaluation_t3_execution_filter/reversal_20d_t3_execution_filter_20260818.json",
+      "primary_q20_result": {
+        "retained_cross_section_ratio_median": 0.7911144470440112,
+        "baseline_mean_ic_5d": 0.044699040613700725,
+        "filtered_mean_ic_5d": 0.050994270873449744,
+        "filtered_ic_ir_5d": 0.44228146400591206,
+        "filtered_newey_west_t_5d": 8.636420746208197
+      }
+    }
+  },
+  "inference": {
+    "newey_west_minimum_lag_rule": "lag >= horizon_trading_days",
+    "overlapping_label_warning_required": true,
+    "rolling_window_trading_days": 252
+  },
+  "output_contract": {
+    "implemented": [
+      "ic_mean_median_sd_ir",
+      "newey_west_standard_error_and_t",
+      "daily_ic_and_rolling_12m",
+      "ic_decay_curve",
+      "negative_control_gate",
+      "label_and_raw_signal_alignment_shift_curves",
+      "time_shuffle_100_repetition_null_distribution",
+      "daily_effective_sample_distribution",
+      "time_shuffle_autocorrelation_diagnostics",
+      "holdout_and_purge_audit",
+      "next_day_execution_filter"
+    ],
+    "next": [
+      "liquidity_and_size_quantile_breakdown",
+      "signal_vs_neutralization_turnover",
+      "decile_portfolio_nav",
+      "segmented_cost_model",
+      "walk_forward_segments"
+    ]
+  },
+  "holdout_capacity": {
+    "as_of": "2026-08-18",
+    "approximate_trading_days": 360,
+    "intended_use": "one_or_two_final_sanity_checks_only",
+    "cannot_confirm": "moderate_edge",
+    "can_reject": ["negative_ic", "neutralization_failure", "catastrophic_instability"]
+  }
+}

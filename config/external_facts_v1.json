@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "facts": [
+    {"fact_key":"stamp_duty_sell","scope":null,"effective_from":"2008-09-19","effective_to":"2023-08-27","value":{"rate":0.001},"source_url":"https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm"},
+    {"fact_key":"stamp_duty_sell","scope":null,"effective_from":"2023-08-28","effective_to":null,"value":{"rate":0.0005},"source_url":"https://www.mof.gov.cn/jrttts/202308/t20230828_3904235.htm"},
+    {"fact_key":"regime_break","scope":"STAR","effective_from":"2019-07-22","effective_to":null,"value":{"event":"star_market_open"},"source_url":"https://www.sse.com.cn/aboutus/mediacenter/hotandd/c/c_20190705_4858654.shtml"},
+    {"fact_key":"regime_break","scope":"CHINEXT","effective_from":"2020-08-24","effective_to":null,"value":{"event":"registration_reform"},"source_url":"https://www.szse.cn/aboutus/trends/news/t20200824_580949.html"},
+    {"fact_key":"regime_break","scope":"BSE","effective_from":"2021-11-15","effective_to":null,"value":{"event":"bse_open"},"source_url":"https://www.bse.cn/company/introduce.html"},
+    {"fact_key":"regime_break","scope":"MAIN","effective_from":"2023-04-10","effective_to":null,"value":{"event":"main_board_registration_first_listings"},"source_url":"https://www.csrc.gov.cn/shanghai/c105566/c7402810/content.shtml"},
+    {"fact_key":"price_limit_pct","scope":"CHINEXT","effective_from":"2020-08-24","effective_to":null,"value":{"regular":0.20,"listing_first_five_days":null},"source_url":"https://www.szse.cn/aboutus/trends/news/t20200821_580924.html"},
+    {"fact_key":"price_limit_pct","scope":"BSE","effective_from":"2021-11-15","effective_to":null,"value":{"regular":0.30,"listing_first_day":null},"source_url":"https://www.bse.cn/jygl_list/200010919.html"},
+    {"fact_key":"security_code_migration","scope":"000043.SZ","effective_from":"2019-12-16","effective_to":null,"value":{"new_asset_id":"001914.SZ","continuity":"same_listed_entity"},"source_url":"https://www.szse.cn/disclosure/notice/general/t20191211_572534.html"}
+  ]
+}

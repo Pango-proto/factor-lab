@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "config_id": "l1_risk_exposure_v1",
+  "regression_universe": "all_a_share",
+  "per_board_regression": "forbidden",
+  "required_data_policy": {
+    "method": "complete_case_before_matrix_build",
+    "required": ["sw_l1_code", "board_id", "float_mkt_cap"],
+    "missing_industry_imputation": "forbidden",
+    "coverage_gate_source": "research_protocol.derived_params.coverage_min",
+    "audit_fields": ["n_input", "n_valid", "n_excluded", "coverage_ratio"]
+  },
+  "universe_variants": {
+    "allowed_for_development": ["d120", "derived"],
+    "allowed_for_formal_publish": ["frozen_d0"],
+    "formal_publish_policy": "new_listing_policy_v1.formal_exposure_publish_gate"
+  },
+  "row_metadata": {
+    "required": [
+      "trade_date",
+      "asset_id",
+      "board_id",
+      "sw_l1_code",
+      "sw_l2_code",
+      "exchange_list_date",
+      "days_since_exchange_list"
+    ],
+    "risk_regression_industry_column": "sw_l1_code",
+    "display_only_industry_column": "sw_l2_code",
+    "board_grouping_column": "board_id"
+  },
+  "categorical_constraint_blocks": [
+    {
+      "factor_id": "industry_sw1",
+      "source_column": "sw_l1_code",
+      "encoding": "full_one_hot",
+      "constraint": "float_market_cap_weighted_sum_zero",
+      "required": true
+    },
+    {
+      "factor_id": "board",
+      "source_column": "board_id",
+      "encoding": "full_one_hot",
+      "constraint": "float_market_cap_weighted_sum_zero",
+      "required": false
+    }
+  ],
+  "categorical_exposure_scale_contract": {
+    "freeze_class": "B_semantic_choice",
+    "status": "explicitly_recorded_after_audit_of_preexisting_implementation",
+    "industry_and_board_columns": "raw_full_one_hot_no_W_standardization",
+    "style_columns": "float_market_cap_weighted_z_then_metric_weighted_orthogonalization",
+    "economic_rationale": "A categorical factor return retains the return difference associated with membership in the named category; numerical preconditioning must not change the published exposure or factor-return unit.",
+    "solver_consequence": "Any numerical condition gate must be invariant to equivalent column rescaling and therefore cannot be evaluated on the raw unpreconditioned normal matrix.",
+    "change_rule": "Changing published categorical exposure scale requires a new risk-basis version; deterministic internal solver equilibration does not."
+  },
+  "identification": {
+    "expected_deficiency": "daily_rank_of_constraint_matrix",
+    "require_constraint_rows_independent": true,
+    "null_space_basis": "blockwise_qr_then_block_diagonal_assembly",
+    "empty_categories": "remove_physically_before_matrix_build"
+  },
+  "minimum_category_members": {
+    "source": "research_protocol.derived_params.minimum_category_members",
+    "failure_policy": "mark_date_invalid"
+  },
+  "style_pipeline": {
+    "winsorize": "derived_mad_threshold",
+    "standardize": "float_market_cap_weighted_z",
+    "orthogonalization_order_source": "risk_set_member.orthogonalize_after",
+    "post_residualization": "weighted_scale_only",
+    "orthogonalization_metric_source": "weight_metric_contract_v1.exposure_orthogonalization_weight",
+    "must_bind_regression_base_weight": true
+  }
+}

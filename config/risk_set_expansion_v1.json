@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "protocol_id": "risk_set_expansion_v1",
+  "risk_set_version": 1,
+  "risk_factor_set_id": "risk_candidates_a304eeaa3447b4ee",
+  "status": "backfilled_from_published_l1_manifest",
+  "source_manifest": "data/gold/risk_exposure_matrix/run_id=l1_risk_exposure_history_20260814_e3b192fa61031760/_MANIFEST.json",
+  "source_manifest_sha256": "bd45cc60b55b6dc573def61ea0ce1a607cac3b3a5f873dbfa5279d41ef158c63",
+  "k_definition": "count of finite Float64 columns whose names start with risk_, excluding lineage and metadata columns",
+  "expanded_factor_count": 44,
+  "logical_members": [
+    {"base_feature_id": "country", "base_feature_version": 1, "expansion_group_id": "country", "expansion_type": "identity", "generated_columns": ["risk_country"], "k_contribution": 1},
+    {"base_feature_id": "industry_sw1", "base_feature_version": 1, "expansion_group_id": "industry", "expansion_type": "one_hot", "generated_columns": [
+      "risk_industry_801010_SI", "risk_industry_801030_SI", "risk_industry_801040_SI", "risk_industry_801050_SI", "risk_industry_801080_SI", "risk_industry_801110_SI", "risk_industry_801120_SI", "risk_industry_801130_SI", "risk_industry_801140_SI", "risk_industry_801150_SI", "risk_industry_801160_SI", "risk_industry_801170_SI", "risk_industry_801180_SI", "risk_industry_801200_SI", "risk_industry_801210_SI", "risk_industry_801230_SI", "risk_industry_801710_SI", "risk_industry_801720_SI", "risk_industry_801730_SI", "risk_industry_801740_SI", "risk_industry_801750_SI", "risk_industry_801760_SI", "risk_industry_801770_SI", "risk_industry_801780_SI", "risk_industry_801790_SI", "risk_industry_801880_SI", "risk_industry_801890_SI", "risk_industry_801950_SI", "risk_industry_801960_SI", "risk_industry_801970_SI", "risk_industry_801980_SI"
+    ], "k_contribution": 31},
+    {"base_feature_id": "board", "base_feature_version": 1, "expansion_group_id": "board", "expansion_type": "one_hot", "generated_columns": ["risk_board_CHINEXT", "risk_board_MAIN", "risk_board_STAR", "risk_board_BSE"], "k_contribution": 4},
+    {"base_feature_id": "index_membership", "base_feature_version": 1, "expansion_group_id": "index_membership", "expansion_type": "one_hot", "generated_columns": ["risk_index_CSI300", "risk_index_CSI500"], "k_contribution": 2},
+    {"base_feature_id": "size", "base_feature_version": 1, "expansion_group_id": "size", "expansion_type": "identity", "generated_columns": ["risk_size"], "k_contribution": 1},
+    {"base_feature_id": "beta", "base_feature_version": 1, "expansion_group_id": "beta", "expansion_type": "identity", "generated_columns": ["risk_beta"], "k_contribution": 1},
+    {"base_feature_id": "residual_volatility", "base_feature_version": 1, "expansion_group_id": "residual_volatility", "expansion_type": "identity", "generated_columns": ["risk_residual_volatility"], "k_contribution": 1},
+    {"base_feature_id": "liquidity", "base_feature_version": 1, "expansion_group_id": "liquidity", "expansion_type": "identity", "generated_columns": ["risk_liquidity"], "k_contribution": 1},
+    {"base_feature_id": "nonlinear_size", "base_feature_version": 1, "expansion_group_id": "nonlinear_size", "expansion_type": "identity", "generated_columns": ["risk_nonlinear_size"], "k_contribution": 1},
+    {"base_feature_id": "listing_age", "base_feature_version": 1, "expansion_group_id": "listing_age", "expansion_type": "identity", "generated_columns": ["risk_listing_age"], "k_contribution": 1}
+  ],
+  "expanded_columns_are_not_new_economic_families": true,
+  "used_by": ["g3_factor_count", "research_protocol_half_life_derivation", "g5_ewma_and_bias_tests"]
+}

@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "policy_id": "new_listing_policy_v1",
+  "steady_state_window_source": "new_listing_window_v1",
+  "universe_variants": {
+    "d120": {
+      "minimum_listing_trading_days": 120,
+      "purpose": "development_reference"
+    },
+    "derived": {
+      "minimum_listing_trading_days_source": "new_listing_window_v1",
+      "purpose": "steady_state_reference_and_sensitivity_only",
+      "not_used_as_exclusion": true
+    },
+    "frozen_d0": {
+      "minimum_listing_trading_days_source": "d0_model_exclusion.value",
+      "purpose": "formal_l1_l2_membership"
+    }
+  },
+  "d0_model_exclusion": {
+    "status": "frozen",
+    "value": 20,
+    "unit": "exchange_trading_days",
+    "meaning": "Exclude only the period in which prices are not determined by normal supply and demand.",
+    "class": "B_frozen_modeling_choice",
+    "evidence": {
+      "metric": "cross_sectional_share_of_one_price_limit_observations_at_fixed_listing_age",
+      "not_cumulative_per_security": true,
+      "maximum_age_above_5pct": {
+        "MAIN_pre_registration": 13,
+        "CHINEXT_pre_registration": 16
+      },
+      "main_pre_registration_ratio_at_d20": 0.007518796992481203,
+      "source_run_id": "new_listing_window_75922323b0b20da3"
+    },
+    "rationale": "Twenty days excludes the structurally unmodellable price-discovery period with a safety margin; listing_age models residual decay after d0.",
+    "frozen_at": "2026-08-15",
+    "frozen_by": "explicit_user_confirmation"
+  },
+  "d_star_reference": {
+    "class": "A_label_free_derived_reference",
+    "meaning": "Age at which adjusted volatility reaches steady state; informs listing_age support only.",
+    "not_used_as_exclusion": true,
+    "source_run_id": "new_listing_window_75922323b0b20da3",
+    "values": {
+      "MAIN_pre_registration": 75,
+      "MAIN_post_registration": 46,
+      "CHINEXT_pre_registration": 75,
+      "CHINEXT_post_registration": 43,
+      "STAR": 35,
+      "BSE": 25
+    }
+  },
+  "formal_exposure_publish_gate": {
+    "requires_d0_status": "frozen",
+    "formal_universe_variant": "frozen_d0",
+    "development_outputs_must_be_tagged": true,
+    "development_outputs_may_not_update_current_pointer": true
+  }
+}

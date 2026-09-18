@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status_id": "g4_1a_selection_status_v1",
+  "status": "deployed_selection_evidence_unverifiable",
+  "deployment": {
+    "selected_scheme_id": "structural_pit_v1",
+    "weight_contract": "config/weight_metric_contract_v1.json",
+    "selected_artifact_sha256": "bbf5c8975a461170534ce8059febd60fbb0e626138ecf9e117bb6e59a15b3de4",
+    "g3_run_id_at_recording": "g3_risk_only_history_20260814_a1a6dd9d1eda3d05",
+    "current_g3_pointer": "data/gold/l2b_risk_only/_CURRENT.json",
+    "reference_semantics": "g3_run_id_at_recording is historical evidence, not an active input; resolve the current pointer and validate its lineage for new runs."
+  },
+  "selection_evidence": {
+    "required_protocol": "config/g4_validation_protocol_v1.json#g4_1a_wls_weight_protocol",
+    "original_baseline_run_id": null,
+    "candidate_manifest_retained": false,
+    "candidate_scores_retained": false,
+    "structural_coefficients_retained": false,
+    "exact_historical_reconstruction_available": false
+  },
+  "disposition": {
+    "current_pointer_mutation": "forbidden",
+    "g6_evidence_chain": "incomplete_at_g4_1a",
+    "historical_baseline": "unreproduced_baseline",
+    "next_action": "search_for_original_baseline_and_candidate_manifests; otherwise_record_any_new_run_as_new_validation_experiment"
+  },
+  "evidence": [
+    "data/diagnostics/weight_metric_migration/legacy_cleanup_v1.json",
+    "data/diagnostics/g4_wls_freeze/run_id=g4_wls_freeze_20260814_bee78ce109965013/RETAINED_INPUT_NOTICE.json"
+  ]
+}

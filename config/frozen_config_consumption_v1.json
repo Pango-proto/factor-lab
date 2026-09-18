@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "policy_id": "frozen_config_consumption_v1",
+  "purpose": "Require every frozen protocol surface to declare a production consumer.",
+  "bindings": [
+    {
+      "config": "config/g4_validation_protocol_v1.json",
+      "json_pointer": "/diagnostic_day_sample",
+      "consumer": "src-python/factor_matrix/calculation/l2/g4_weight_selection.py",
+      "required_markers": ["diagnostic_day_sample", "frozen_diagnostic_sample"]
+    },
+    {
+      "config": "config/weight_metric_contract_v1.json",
+      "json_pointer": "/regression_base_weight",
+      "consumer": "src-python/factor_matrix/calculation/l2/g4_diagnostics.py",
+      "required_markers": ["weight_metric_contract_v1", "base_weight_artifact"]
+    }
+  ],
+  "failure": "frozen_config_without_declared_consumer"
+}

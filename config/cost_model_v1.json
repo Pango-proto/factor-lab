@@ -1,0 +1,119 @@
+{
+  "config_id": "cost_model_v1",
+  "version": 1,
+  "status": "frozen",
+  "frozen_at": "2026-08-20",
+  "account_context": {
+    "broker_statement_date": "2026-08-20",
+    "capital_base_yuan": 200000,
+    "evidence": "broker commission schedule; 5 CNY per-ticket minimum confirmed 2026-08-20"
+  },
+
+  "cost_is_per_ticket_not_per_notional": {
+    "statement": "Commission carries a 5 CNY floor per ticket, so total cost is a function of the NUMBER of tickets, not only of turnover. Two rebalances with identical turnover can differ in commission by an order of magnitude.",
+    "worked_contrast": {
+      "trim_20_positions_by_10_percent": {"turnover": 0.10, "tickets": 20, "commission_yuan": 100},
+      "replace_2_positions_fully": {"turnover": 0.10, "tickets": 2, "commission_yuan": 10}
+    },
+    "design_implication": "Portfolio construction must prefer discrete whole-position replacement over continuous weight adjustment. Any cost estimate driven by turnover alone understates fragmented rebalancing.",
+    "forbidden": "computing commission as rate * turnover * capital without a ticket count"
+  },
+
+  "explicit_costs": {
+    "commission": {
+      "rate": {
+        "sh_sz_equity": 0.00018540,
+        "sh_sz_fund_etf_lof": 0.00020000,
+        "bse": 0.00137500,
+        "neeq": 0.00150000
+      },
+      "minimum_charge_yuan": 5.0,
+      "minimum_charge_confirmed": true,
+      "formula": "commission_yuan = max(rate * ticket_notional, 5.0)",
+      "floor_binding_below_notional_yuan": 26968.72,
+      "sides": "both",
+      "all_in": true,
+      "all_in_note": "经手费, 证管费 and 证券结算风险基金 are absorbed by the broker and are not charged separately."
+    },
+    "stamp_duty": {
+      "rate": 0.0005,
+      "sides": "sell_only",
+      "applies_to": ["sh_sz_equity", "bse", "neeq"],
+      "excludes": ["fund_etf_lof"],
+      "effective_from": "2023-08-28"
+    },
+    "transfer_fee": {
+      "rate": 0.00001,
+      "sides": "both",
+      "applies_to": ["sh_equity", "bse", "neeq"],
+      "excludes": ["sz_equity"],
+      "sz_note": "深圳A股过户费由证券公司承担, not charged to the investor."
+    }
+  },
+
+  "implicit_costs": {
+    "primary_driver": "tick_induced_half_spread",
+    "rationale": "A-share tick size is a fixed 0.01 CNY, so quoted spread in basis points is a function of price, not of liquidity. At 200k capital a ticket is roughly 10-20k CNY, negligible against any liquid name's depth, so impact is second order.",
+    "half_spread_model": "0.5 * 0.01 / close_price",
+    "half_spread_sides": "both",
+    "price_band_reference_bps": {
+      "price_5": 10.0, "price_10": 5.0, "price_20": 2.5,
+      "price_30": 1.67, "price_50": 1.0, "price_100": 0.5
+    },
+    "impact": {
+      "model": "none_at_current_capital",
+      "activation_threshold_yuan": 5000000,
+      "rationale": "Reinstate a participation-rate impact term only when ticket size becomes a material fraction of daily volume. Modelling impact now adds a free parameter with no data to calibrate it."
+    },
+    "queue_and_fill_risk": {
+      "model": "not_modelled",
+      "disposition": "known_residual",
+      "rationale": "Marketable-limit execution at the next unified trading day is assumed. Partial-fill and adverse-selection costs remain an unmodelled residual."
+    }
+  },
+
+  "turnover_convention": {
+    "portfolio_turnover": "0.5 * sum_i abs(w_i_t - w_i_tminus1)",
+    "sides": "one_sided",
+    "ticket_count": "number of assets whose weight change implies a trade of at least one board lot",
+    "cost_driver": "ticket_count",
+    "turnover_role": "reporting_only",
+    "restatement_required": "The existing smoke run reports mean daily turnover of 55.6% and break-even near 11-12 bps under an unstated convention. Both must be recomputed under this definition before any T4 conclusion is drawn, and the prior reading recorded alongside."
+  },
+
+  "position_count_cost_table": {
+    "note": "Round-trip explicit cost in basis points, 深圳A股 (no transfer fee), excluding half spread.",
+    "n_10": {"ticket_yuan": 20000, "commission_bps": 2.50, "round_trip_bps": 10.00},
+    "n_12": {"ticket_yuan": 16667, "commission_bps": 3.00, "round_trip_bps": 11.00},
+    "n_15": {"ticket_yuan": 13333, "commission_bps": 3.75, "round_trip_bps": 12.50},
+    "n_20": {"ticket_yuan": 10000, "commission_bps": 5.00, "round_trip_bps": 15.00},
+    "n_30": {"ticket_yuan": 6667, "commission_bps": 7.50, "round_trip_bps": 20.00},
+    "tension": "Commission efficiency favours N <= 12, while idiosyncratic diversification favours larger N. This trade-off cannot be resolved inside the cost model and is deferred to the T4 grid."
+  },
+
+  "universe_cost_exclusions": {
+    "bse": {
+      "excluded": true,
+      "reason": "13.75 bps per side is 7.4x the 沪深 rate; round-trip explicit cost reaches roughly 32.6 bps before spread.",
+      "affected_asset_count_at_20260814": 290
+    },
+    "neeq": {"excluded": true, "reason": "15.0 bps per side plus materially worse liquidity."}
+  },
+
+  "preregistered_t4_grid": {
+    "position_counts": [10, 12, 15, 20],
+    "rebalance_frequencies_trading_days": [1, 2, 3, 5, 10],
+    "smoothing_variants": ["none", "5d_moving_average"],
+    "selection_rule": "highest net information ratio under this cost model",
+    "selection_frozen_before_results": true,
+    "rationale": "Both N and frequency change cost through the ticket-count channel, so they cannot be selected independently."
+  },
+
+  "decision_role": "cost_estimate_artifact_input_not_a_signal_selection_rule",
+  "forbidden": [
+    "tuning the spread or impact model after seeing net performance",
+    "computing commission without applying the 5 CNY per-ticket floor",
+    "excluding an asset class on cost grounds without recording it in universe_cost_exclusions",
+    "treating the absence of an impact term as evidence that impact is zero at larger capital"
+  ]
+}

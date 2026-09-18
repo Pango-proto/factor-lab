@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g4_statistical_loading_semantic_probe_v1",
+  "status": "pending_one_run_on_current_risk_basis",
+  "completed_run_id": null,
+  "risk_basis_id": "risk_basis_5649d34a30c03cef",
+  "risk_metric_id": "risk_metric_524163ea01abfe28",
+  "decision_sample_end_inclusive": "2025-02-28",
+  "semantic_class": "risk_loading_to_economic_descriptor_overlap_probe",
+  "explicit_non_alpha_assertions": {
+    "factor_specs_registered": 0,
+    "alpha_exposures_published": 0,
+    "forward_return_labels_used": false,
+    "IC_or_portfolio_metrics_produced": false,
+    "probe_descriptors_reserved_as_future_alpha": false
+  },
+  "probe_descriptors": [
+    "book_to_price",
+    "earnings_to_price",
+    "momentum_12_1",
+    "reversal_1m",
+    "roe_ttm_implied",
+    "asset_growth_yoy",
+    "analyst_coverage_change_unavailable"
+  ],
+  "interpretation": "The descriptors are semantic canaries used once to characterize anonymous statistical risk loadings. They are neither alpha definitions nor evidence of alpha efficacy."
+}

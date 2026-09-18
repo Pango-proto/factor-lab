@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "industry": {
+    "standard": "SW2021",
+    "level": "L2",
+    "minimum_coverage": 0.97,
+    "full_refresh_max_calendar_days": 35
+  },
+  "concepts": {
+    "full_reconciliation_max_calendar_days": 35,
+    "daily_detection": "master_diff_then_candidate_members"
+  },
+  "publication": {
+    "require_single_silver_version": true,
+    "require_policy_free_security_state": true,
+    "allow_source_incomplete_rows": false
+  }
+}

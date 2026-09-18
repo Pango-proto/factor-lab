@@ -1,0 +1,18 @@
+{
+  "contract_id": "backtest_analytics_v1",
+  "source": {
+    "path": "diagnostics/strategy_fixture_v1/run_id=strategy_fixture_v1_868da5aedd838c9d/_MANIFEST.json",
+    "sha256": "51ff427879a1364a1854c5ad545218a29187870a95e49351a171de13555656c8"
+  },
+  "capacity_multipliers": ["1", "0.5"],
+  "participation": "0.01",
+  "adv_observations": 20,
+  "interpretation": "Fixed engineering execution stress cases; retain every result, no strategy selection",
+  "path_convention": "Observation-time flow-neutral wealth, end-of-period external flows, initial capital included",
+  "capacity_convention": "Lagged 20-observation ADV, units shares, 1% participation is an engineering assumption",
+  "ope_convention": "Episodic IS/PDIS/WIS require verified logging/identification and full action support; never fabricate propensities",
+  "sources": [
+    "https://proceedings.mlr.press/v48/jiang16.html",
+    "https://tushare.pro/document/1?doc_id=27"
+  ]
+}

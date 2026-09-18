@@ -1,0 +1,391 @@
+{
+  "contract_id": "accounting_fixture_v1",
+  "purpose": "engineering_fixture_only",
+  "real_cost_verified": false,
+  "policy": {
+    "commission_rate": "0.0001854",
+    "minimum_commission_cny": "5.00",
+    "charge_aggregation": "cumulative_per_order_fixture_assumption",
+    "rounding": "CNY_cent_half_up_fixture_assumption",
+    "other_fees": "excluded_unverified_not_a_real_total_cost",
+    "settlement": "explicit_sellable_at_per_fill_fixture_assumption",
+    "split_open_orders": "cancel_fixture_assumption",
+    "dividend": "record_receivable_then_pay_gross_fixture_assumption"
+  },
+  "initial_cash": "50000.00",
+  "lot_size": 10,
+  "notes": [
+    "All instruments, timestamps, prices and lot sizes are artificial engineering inputs.",
+    "Commission rate and minimum are user-confirmed; aggregation, rounding, taxes, settlement and corporate action policies are fixture assumptions."
+  ],
+  "events": [
+    {
+      "event_id": "e001",
+      "kind": "submit",
+      "time": "2001-01-01T10:00:00+00:00",
+      "order_id": "buy_sh",
+      "asset_id": "FIXTURE.SH",
+      "side": "buy",
+      "quantity": 500,
+      "limit_price": "10.00",
+      "decision_time": "2001-01-01T10:00:00+00:00",
+      "earliest_execution": "2001-01-01T11:00:00+00:00"
+    },
+    {
+      "event_id": "e002",
+      "kind": "submit",
+      "time": "2001-01-01T10:01:00+00:00",
+      "order_id": "too_large",
+      "asset_id": "FIXTURE.SH",
+      "side": "buy",
+      "quantity": 10000,
+      "limit_price": "10.00",
+      "decision_time": "2001-01-01T10:01:00+00:00",
+      "earliest_execution": "2001-01-01T11:00:00+00:00"
+    },
+    {
+      "event_id": "e003",
+      "kind": "submit",
+      "time": "2001-01-01T10:02:00+00:00",
+      "order_id": "bad_lot",
+      "asset_id": "FIXTURE.SH",
+      "side": "buy",
+      "quantity": 11,
+      "limit_price": "10.00",
+      "decision_time": "2001-01-01T10:02:00+00:00",
+      "earliest_execution": "2001-01-01T11:00:00+00:00"
+    },
+    {
+      "event_id": "e004",
+      "kind": "execute",
+      "time": "2001-01-01T10:30:00+00:00",
+      "order_id": "buy_sh",
+      "fill_id": "f004",
+      "quote_time": "2001-01-01T10:30:00+00:00",
+      "price": "10.00",
+      "capacity": 100,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e005",
+      "kind": "execute",
+      "time": "2001-01-01T11:00:00+00:00",
+      "order_id": "buy_sh",
+      "fill_id": "f005",
+      "quote_time": "2001-01-01T11:00:00+00:00",
+      "price": "10.00",
+      "capacity": 100,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": true,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e006",
+      "kind": "execute",
+      "time": "2001-01-01T11:01:00+00:00",
+      "order_id": "buy_sh",
+      "fill_id": "f006",
+      "quote_time": "2001-01-01T11:01:00+00:00",
+      "price": "10.00",
+      "capacity": 100,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": true
+    },
+    {
+      "event_id": "e007",
+      "kind": "execute",
+      "time": "2001-01-01T11:02:00+00:00",
+      "order_id": "buy_sh",
+      "fill_id": "f007",
+      "quote_time": "2001-01-01T11:02:00+00:00",
+      "price": "10.01",
+      "capacity": 100,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e008",
+      "kind": "execute",
+      "time": "2001-01-01T11:03:00+00:00",
+      "order_id": "buy_sh",
+      "fill_id": "f008",
+      "quote_time": "2001-01-01T11:03:00+00:00",
+      "price": "10.00",
+      "capacity": 0,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e009",
+      "kind": "execute",
+      "time": "2001-01-01T11:04:00+00:00",
+      "order_id": "buy_sh",
+      "fill_id": "f009",
+      "quote_time": "2001-01-01T11:04:00+00:00",
+      "price": "10.00",
+      "capacity": 100,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e010",
+      "kind": "execute",
+      "time": "2001-01-01T11:05:00+00:00",
+      "order_id": "buy_sh",
+      "fill_id": "f010",
+      "quote_time": "2001-01-01T11:05:00+00:00",
+      "price": "10.00",
+      "capacity": 400,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e011",
+      "kind": "submit",
+      "time": "2001-01-01T11:06:00+00:00",
+      "order_id": "same_day_sell",
+      "asset_id": "FIXTURE.SH",
+      "side": "sell",
+      "quantity": 100,
+      "limit_price": "10.00",
+      "decision_time": "2001-01-01T11:06:00+00:00",
+      "earliest_execution": "2001-01-01T11:07:00+00:00"
+    },
+    {
+      "event_id": "e012",
+      "kind": "submit",
+      "time": "2001-01-01T11:08:00+00:00",
+      "order_id": "buy_sz",
+      "asset_id": "FIXTURE.SZ",
+      "side": "buy",
+      "quantity": 3000,
+      "limit_price": "10.00",
+      "decision_time": "2001-01-01T11:08:00+00:00",
+      "earliest_execution": "2001-01-01T11:09:00+00:00"
+    },
+    {
+      "event_id": "e013",
+      "kind": "execute",
+      "time": "2001-01-01T11:09:00+00:00",
+      "order_id": "buy_sz",
+      "fill_id": "f013",
+      "quote_time": "2001-01-01T11:09:00+00:00",
+      "price": "10.00",
+      "capacity": 1000,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e014",
+      "kind": "execute",
+      "time": "2001-01-01T11:10:00+00:00",
+      "order_id": "buy_sz",
+      "fill_id": "f014",
+      "quote_time": "2001-01-01T11:10:00+00:00",
+      "price": "10.00",
+      "capacity": 2000,
+      "sellable_at": "2001-01-02T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e015",
+      "kind": "mark",
+      "time": "2001-01-01T16:00:00+00:00",
+      "quotes": {
+        "FIXTURE.SH": {
+          "price": "10.00",
+          "observed_at": "2001-01-01T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-01T16:00:00+00:00"
+        }
+      }
+    },
+    {
+      "event_id": "e016",
+      "kind": "dividend_record",
+      "time": "2001-01-02T09:00:00+00:00",
+      "action_id": "div_sh",
+      "asset_id": "FIXTURE.SH",
+      "cash_per_share": "0.20"
+    },
+    {
+      "event_id": "e017",
+      "kind": "submit",
+      "time": "2001-01-02T10:00:00+00:00",
+      "order_id": "sell_sh",
+      "asset_id": "FIXTURE.SH",
+      "side": "sell",
+      "quantity": 100,
+      "limit_price": "9.80",
+      "decision_time": "2001-01-02T10:00:00+00:00",
+      "earliest_execution": "2001-01-02T11:00:00+00:00"
+    },
+    {
+      "event_id": "e018",
+      "kind": "execute",
+      "time": "2001-01-02T11:00:00+00:00",
+      "order_id": "sell_sh",
+      "fill_id": "f018",
+      "quote_time": "2001-01-02T11:00:00+00:00",
+      "price": "9.80",
+      "capacity": 100,
+      "sellable_at": "2001-01-03T00:00:00+00:00",
+      "halted": false,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e019",
+      "kind": "submit",
+      "time": "2001-01-02T12:00:00+00:00",
+      "order_id": "cancel_me",
+      "asset_id": "FIXTURE.SH",
+      "side": "buy",
+      "quantity": 100,
+      "limit_price": "9.00",
+      "decision_time": "2001-01-02T12:00:00+00:00",
+      "earliest_execution": "2001-01-02T12:01:00+00:00"
+    },
+    {
+      "event_id": "e020",
+      "kind": "cancel",
+      "time": "2001-01-02T12:02:00+00:00",
+      "order_id": "cancel_me"
+    },
+    {
+      "event_id": "e021",
+      "kind": "submit",
+      "time": "2001-01-02T12:03:00+00:00",
+      "order_id": "split_cancel",
+      "asset_id": "FIXTURE.SH",
+      "side": "buy",
+      "quantity": 100,
+      "limit_price": "9.00",
+      "decision_time": "2001-01-02T12:03:00+00:00",
+      "earliest_execution": "2001-01-03T11:00:00+00:00"
+    },
+    {
+      "event_id": "e022",
+      "kind": "mark",
+      "time": "2001-01-02T16:00:00+00:00",
+      "quotes": {
+        "FIXTURE.SH": {
+          "price": "9.80",
+          "observed_at": "2001-01-02T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-02T16:00:00+00:00"
+        }
+      }
+    },
+    {
+      "event_id": "e023",
+      "kind": "split",
+      "time": "2001-01-03T09:00:00+00:00",
+      "action_id": "split_sh",
+      "asset_id": "FIXTURE.SH",
+      "numerator": 2,
+      "denominator": 1
+    },
+    {
+      "event_id": "e024",
+      "kind": "dividend_pay",
+      "time": "2001-01-03T10:00:00+00:00",
+      "action_id": "div_sh"
+    },
+    {
+      "event_id": "e025",
+      "kind": "mark",
+      "time": "2001-01-03T16:00:00+00:00",
+      "quotes": {
+        "FIXTURE.SH": {
+          "price": "4.90",
+          "observed_at": "2001-01-03T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "10.00",
+          "observed_at": "2001-01-03T16:00:00+00:00"
+        }
+      }
+    },
+    {
+      "event_id": "e026",
+      "kind": "submit",
+      "time": "2001-01-04T10:00:00+00:00",
+      "order_id": "halted_sell",
+      "asset_id": "FIXTURE.SH",
+      "side": "sell",
+      "quantity": 100,
+      "limit_price": "3.00",
+      "decision_time": "2001-01-04T10:00:00+00:00",
+      "earliest_execution": "2001-01-04T11:00:00+00:00"
+    },
+    {
+      "event_id": "e027",
+      "kind": "execute",
+      "time": "2001-01-04T11:00:00+00:00",
+      "order_id": "halted_sell",
+      "fill_id": "f027",
+      "quote_time": "2001-01-04T11:00:00+00:00",
+      "price": "4.90",
+      "capacity": 100,
+      "sellable_at": "2001-01-05T00:00:00+00:00",
+      "halted": true,
+      "side_blocked": false
+    },
+    {
+      "event_id": "e028",
+      "kind": "mark",
+      "time": "2001-01-04T16:00:00+00:00",
+      "quotes": {
+        "FIXTURE.SH": {
+          "price": "4.90",
+          "observed_at": "2001-01-03T16:00:00+00:00",
+          "carry_reason": "synthetic_halt_last_mark"
+        },
+        "FIXTURE.SZ": {
+          "price": "9.00",
+          "observed_at": "2001-01-04T16:00:00+00:00"
+        }
+      }
+    },
+    {
+      "event_id": "e029",
+      "kind": "cancel",
+      "time": "2001-01-05T10:00:00+00:00",
+      "order_id": "halted_sell"
+    },
+    {
+      "event_id": "e030",
+      "kind": "mark",
+      "time": "2001-01-05T16:00:00+00:00",
+      "quotes": {
+        "FIXTURE.SH": {
+          "price": "3.00",
+          "observed_at": "2001-01-05T16:00:00+00:00"
+        },
+        "FIXTURE.SZ": {
+          "price": "9.00",
+          "observed_at": "2001-01-05T16:00:00+00:00"
+        }
+      }
+    }
+  ],
+  "expected": {
+    "final_nav": "45464.44",
+    "commission_total": "15.56",
+    "fills": 5,
+    "days": 5
+  }
+}

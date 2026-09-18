@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g4_validation_protocol_v1",
+  "objective": "recover omitted common covariance without consuming alpha dimensions",
+  "diagnostic_day_sample": {
+    "n_days": 250,
+    "stratification": "year × regime_tag",
+    "seed": 20260817,
+    "sampled_at": "2026-08-17",
+    "paired": true,
+    "all_candidates_share_sample": true,
+    "escalation_rule": {
+      "metric": "absolute_gap_difference_between_best_and_second_best",
+      "threshold_percentage_points": 0.3,
+      "action": "upgrade_to_full_history_if_not_separable"
+    },
+    "selection_only": true,
+    "full_history_required_for_publication": true,
+    "sequential_early_stopping": false,
+    "frozen_before_candidate_evaluation": true
+  },
+  "g4_0_attribution_diagnostics": {
+    "incremental_r2": {
+      "implementation_id": "full_label_canonical_wls_incremental_r2_v1",
+      "scope": "full_label_domain",
+      "weighting": "weight_metric_contract_v1.regression_base_weight_artifact",
+      "huber_multiplier_included": false,
+      "diagnostic_unweighted_version": true,
+      "baseline": ["country", "industry_sw1", "board"]
+    },
+    "downweight_quantiles": [0.5, 0.9, 0.99, 1.0],
+    "top_day_count": 20,
+    "group_dimensions": ["board", "market_cap_decile", "industry_l1", "liquidity_decile"],
+    "quantile_count": 10,
+    "event_annotation_source": "external_facts_v1.exact_effective_date_only",
+    "normal_huber_downweight_reference": 0.1787,
+    "pit_asset_scale_diagnostic": {
+      "implementation_id": "pit_trailing_mad_252_v1",
+      "lookback_observations": 252,
+      "minimum_prior_observations": 60,
+      "strictly_prior": true,
+      "scale": "median(abs(u_is), s<t)/0.6744897501960817",
+      "reported_groups": ["overall", "liquidity_decile"],
+      "non_decisional": true
+    },
+    "wls_exponent_diagnostic": {
+      "x": "log_float_market_cap",
+      "y": "log_residual_rms",
+      "expected_slope_under_sqrt_cap_wls": -0.25,
+      "selection_gate": false
+    }
+  },
+  "g4_1_statistical_factor_protocol": {
+    "preregistered": true,
+    "registered_at": "2026-08-16",
+    "rolling_window_days": 252,
+    "evaluation_stride_trading_days": 21,
+    "decision_sample_end_inclusive": "2025-02-28",
+    "minimum_asset_observation_ratio": 0.8,
+    "residual_centering": "per_asset_observed_mean",
+    "residual_standardization": "per_asset_trailing_rms_with_missing_filled_zero_after_centering",
+    "factor_count_rule": "eigenvalue_strictly_above_marchenko_pastur_upper_edge",
+    "marchenko_pastur_upper_edge": "(1 + sqrt(N_eff / T_eff))^2",
+    "maximum_factor_count": 20,
+    "loading_alignment": "orthogonal_procrustes_to_previous_window",
+    "single_column_persistence_test": "exempt_rotation_indeterminate",
+    "stability_test": "largest_principal_angle_between_loading_subspaces",
+    "stability_lag_trading_days": 21,
+    "stability_dimensions": "all_integer_dimensions_1_through_maximum_factor_count",
+    "stable_factor_count_rule": {
+      "aggregation": "median_across_adjacent_21_trading_day_windows",
+      "maximum_largest_principal_angle_degrees": 30.0,
+      "definition": "largest_dimension_with_median_largest_principal_angle_at_or_below_threshold",
+      "frozen_before_full_dimension_rerun": true
+    },
+    "mp_cap_semantics": {
+      "when_all_windows_hit_maximum": "report_J_MP_as_greater_than_or_equal_to_maximum_and_censored_true",
+      "decision_factor_count": "min(J_MP,J_stable)"
+    },
+    "per_board_estimation": "forbidden",
+    "alpha_registry_overlap": "forbidden"
+  },
+  "g4_1b_liquidity_variance_diagnostic": {
+    "liquidity_bins": 10,
+    "statistics": ["variance", "excess_kurtosis", "corr_with_residual_volatility"],
+    "decision_semantics": {
+      "non_monotonic_variance": "eligible_for_explicit_non_linear_factor_review",
+      "monotonic_variance_flat_kurtosis": "variance_weight_model_issue",
+      "monotonic_variance_monotonic_kurtosis": "known_heavy_tail_residual"
+    },
+    "automatic_factor_addition": false
+  },
+  "g4_2_preregistered_member_protocol": {
+    "candidate_order": [
+      "size",
+      "beta",
+      "residual_volatility",
+      "liquidity",
+      "nonlinear_size",
+      "listing_age"
+    ],
+    "evaluation_order_policy": "fixed_order_not_incremental_r2_greedy",
+    "incremental_r2": {
+      "minimum": 0.005,
+      "primary_aggregation": "median_across_daily_incremental_r_squared",
+      "reported_diagnostic_aggregation": "mean_across_daily_incremental_r_squared",
+      "rationale": "Daily incremental R-squared is right-skewed; the median represents explanatory power on a typical trading day.",
+      "scope": "full_label_domain",
+      "weighting": "frozen_current_base_wls_weight_only",
+      "huber_multiplier_included_in_scoring_weight": false
+    },
+    "report_field_order": [
+      "factor_return_standard_deviation",
+      "factor_return_persistence_rho_21",
+      "coverage",
+      "delta_kappa_eff",
+      "absolute_kappa_eff_after_addition",
+      "alpha_dimension_cost",
+      "incremental_r2_median_primary",
+      "incremental_r2_mean_diagnostic"
+    ],
+    "alpha_dimension_cost_source": {
+      "measurement": null,
+      "risk_basis_id": "risk_basis_5649d34a30c03cef",
+      "risk_metric_id": "risk_metric_524163ea01abfe28",
+      "status": "unavailable_pending_new_basis_probe",
+      "required_replacement": "one complete descriptor rerun under the new risk_basis_id and bound regression-base metric",
+      "future_decision_policy": "config/future_alpha_neutralization_policy_v1.json",
+      "interpretation": "Prospective descriptor overlap is reported as a cost diagnostic only; no current alpha exists and no neutralization decision is automatic."
+    },
+    "frozen_before_first_g4_2_member_run": true,
+    "frozen_at": "2026-08-16"
+  },
+  "g4_3_known_residual_policy": {
+    "condition": "statistical_factor_residual_structure_remains_significant_after_stable_factor_addition",
+    "action": "record_known_residual_and_allow_freeze_if_all_other_preregistered_gates_pass",
+    "rationale": "MP directions may be non-noise while higher-dimensional loading subspaces remain too unstable for reliable publication."
+  },
+  "g4_1a_wls_weight_protocol": {
+    "implementation_id": "g4_1a_pit_weight_selection_v1",
+    "preregistered_at": "2026-08-16T04:10:00Z",
+    "status": "frozen_selected_artifact_only_legacy_trial_runs_deleted",
+    "baseline_run_id": null,
+    "selected_artifact": "data/diagnostics/g4_wls_freeze/run_id=g4_wls_freeze_20260814_bee78ce109965013/selected_wls_weights_v1.parquet",
+    "selected_artifact_sha256": "bbf5c8975a461170534ce8059febd60fbb0e626138ecf9e117bb6e59a15b3de4",
+    "weight_semantics": "diagonal_W_in_X_transpose_W_X",
+    "candidates": [
+      {"id": "sqrt_cap", "formula": "float_mkt_cap^0.5"},
+      {"id": "empirical_cap", "formula": "float_mkt_cap^(-2*baseline_log_sigma_cap_slope)"},
+      {"id": "equal", "formula": "1"},
+      {"id": "structural", "formula": "1/exp(2*predicted_log_sigma_u)"}
+    ],
+    "structural_features": ["log_float_mkt_cap", "risk_liquidity", "risk_residual_volatility", "board_id"],
+    "pit_policy": {
+      "derived_from_run_id": null,
+      "legacy_derivation_runs_retained": false,
+      "return_model": "r_(t+1)=X_t*f_(t+1)+u_(t+1)",
+      "all_features_available_through": "exposure_date_t",
+      "residual_targets_strictly_before_test_return": true,
+      "empirical_cap_slope": "estimated_only_from_baseline_residuals_in_training_fold",
+      "structural_fit": "one_pass_from_fixed_baseline_run_no_iteration",
+      "sigma_floor_relative_to_cross_section_median": 0.1,
+      "minimum_prior_residual_observations": 60,
+      "normalize_candidate_weight_median_to": 1.0,
+      "candidate_weight_ratio_clip": [0.1, 10.0],
+      "insufficient_history_fallback": "sqrt_cap"
+    },
+    "evaluation": {
+      "fit_window_trading_days": 252,
+      "test_window_trading_days": 21,
+      "fold_type": "rolling",
+      "test_block_overlap": "forbidden",
+      "test_stride_trading_days": 21,
+      "decision_sample_end_inclusive": "2025-02-28",
+      "groups": ["board_id", "liquidity_decile", "size_decile"],
+      "score": "coefficient_of_variation_of_group_mean(W_i*u_i^2)",
+      "uses_return_mean": false,
+      "fold_score": "mean_daily_primary_group_coefficient_of_variation",
+      "standard_error": "sample_standard_deviation_of_fold_scores_divided_by_sqrt_fold_count"
+    },
+    "selection_rule": "minimum_out_of_sample_heteroskedasticity_score",
+    "tie_break": "simplest_candidate_within_one_standard_error_of_minimum",
+    "simplicity_order": ["equal", "sqrt_cap", "empirical_cap", "structural"],
+    "forbidden_selection_rule": "maximize_r_squared",
+    "weighted_unweighted_r_squared_gap": "reported_only_not_a_selection_rule",
+    "secondary_guard": {
+      "grouping": ["sw_l1_industry", "realized_volatility_21d_quintile"],
+      "realized_volatility_lookback_days": 21,
+      "realized_volatility_uses_strictly_prior_returns": true,
+      "rationale": "Neither guard dimension is a structural auxiliary-regression feature.",
+      "action_if_winner_worse_than_runner_up": "record_known_residual_without_changing_selection",
+      "frozen_before_any_candidate_run": true
+    },
+    "known_residual_policy": {
+      "maximum_group_mean_Wu2_range_ratio": 1.5,
+      "action": "record_known_residual_and_continue_without_model_iteration"
+    },
+    "acceptance_diagnostics": {
+      "successful_structural_variance_absorption": {
+        "liquidity_decile_downweight_spearman_maximum": 0.0,
+        "endpoint_direction": "decile_1_rate_greater_than_or_equal_to_decile_10_rate",
+        "decision_role": "falsifiable_diagnostic_not_selection_rule"
+      }
+    },
+    "preregistered_predictions_non_decisional": [
+      "structural_has_lowest_primary_score",
+      "sqrt_cap_has_highest_primary_score",
+      "equal_and_empirical_cap_are_within_one_standard_error_and_equal_wins_by_simplicity"
+    ],
+    "candidate_publication": {
+      "publish_current_argument_exposed": false,
+      "current_pointer_mutation_forbidden": true
+    },
+    "frozen_at": "2026-08-16"
+  },
+  "protocol_amendments": [
+    {
+      "amended_at": "2026-08-16T13:33:04+10:00",
+      "reason": "complete weight semantics before candidate reruns; R-squared gap rule rejected because equal weights make it identically zero",
+      "rule_supersession": {
+        "old_rule": "minimize_absolute_weighted_minus_unweighted_r_squared_gap",
+        "defect": "degenerate: candidate equal makes weighted and unweighted R-squared identical by construction",
+        "defect_provable_without_data": true,
+        "superseded_at": "2026-08-16T13:33:04+10:00",
+        "old_rule_result_known_at_supersession": false,
+        "first_candidate_run_must_be_created_after_superseded_at": true
+      }
+    }
+  ],
+  "execution_order": [
+    "g4_0_attribution_diagnostics",
+    "g4_1_statistical_factor_spectrum",
+    "g4_2_preregistered_member_tests",
+    "g4_3_stratified_residual_permutation",
+    "g4_4_listing_age_segments"
+  ]
+}

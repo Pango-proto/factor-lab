@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "contract_id": "weight_metric_contract_v1",
+  "frozen_at": "2026-08-16",
+  "binding": "same_pit_weight_artifact",
+  "regression_base_weight": {
+    "scheme_id": "structural_pit_v1",
+    "artifact_path": "diagnostics/g4_wls_freeze/run_id=g4_wls_freeze_20260814_bee78ce109965013/selected_wls_weights_v1.parquet",
+    "artifact_sha256": "bbf5c8975a461170534ce8059febd60fbb0e626138ecf9e117bb6e59a15b3de4",
+    "missing_date_fallback_scheme_id": "sqrt_cap",
+    "missing_asset_fallback_scheme_id": "sqrt_cap",
+    "fallback_scope": "rows outside the frozen G3 estimation-weight artifact domain only",
+    "semantics": "diagonal W in X_transpose_W_X before Huber multipliers"
+  },
+  "exposure_orthogonalization_weight": {
+    "scheme_id": "structural_pit_v1",
+    "source": "regression_base_weight.artifact",
+    "post_residualization": "weighted_scale_only"
+  },
+  "huber_effective_weight_policy": {
+    "not_available_to_L1": true,
+    "reason": "Huber multipliers depend on realized-return residuals",
+    "required_L2b_diagnostic": "report alpha-risk cross-block Gram under base and final effective weights"
+  }
+}

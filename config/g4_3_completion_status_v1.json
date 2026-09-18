@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g4_3_completion_status_v1",
+  "status": "completed_with_unverified_control",
+  "completed_at": "2026-08-18",
+  "confirmation_manifest": "data/diagnostics/g4_3_residual_permutation_v2/run_id=g4_3_residual_permutation_v2_abae6c91242e1176/_MANIFEST.json",
+  "decision": "Close G4.3 for this build as an evidence gap. Retain the industry negative-control failure and the weighted-null calibration defect explicitly; proceed without new statistic design, synthetic calibration, or full-coverage reruns.",
+  "board_control": "passed",
+  "industry_control": "unverified_negative_control",
+  "weight_dispersion_diagnostic": "completed_non_decisional",
+  "next_phase": "proceed_to_alpha_research"
+}

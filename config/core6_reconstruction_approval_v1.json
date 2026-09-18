@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "core6_historical_reconstruction_v1",
+  "status": "approved",
+  "user_instruction": "允许历史重建诊断，保留真实时点阻断",
+  "approved_local_date": "2026-09-18",
+  "proposal_path": "CORE6_HISTORICAL_RECONSTRUCTION_PROPOSAL_20260918.md",
+  "proposal_sha256": "1263824c7b6a939920cf910c00676b2a1e796fd349c9812b445b97a97d43f6ef",
+  "historical_pit_verified": false,
+  "production_eligible": false,
+  "start": "2023-02-01",
+  "end": "2025-02-28",
+  "seed_change_allowed": false,
+  "threshold_change_allowed": false,
+  "current_change_allowed": false,
+  "holdout_evaluation_allowed": false
+}

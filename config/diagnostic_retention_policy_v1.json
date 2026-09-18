@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "policy_id": "diagnostic_retention_policy_v1",
+  "frozen_at": "2026-08-17",
+  "authority": "config_and_manifest_only",
+  "classes": {
+    "selection_freeze": {
+      "match": ["selection", "freeze", "experiment_registry"],
+      "retain": "permanent",
+      "required_artifacts": [
+        "candidate_scores",
+        "candidate_ordering",
+        "selection_rule_reference",
+        "rule_sha",
+        "preregistered_at",
+        "candidate_started_at",
+        "selected_id",
+        "auxiliary_coefficients_when_applicable"
+      ],
+      "deletion": "forbidden"
+    },
+    "ordinary_diagnostic": {
+      "retain_manifest": "permanent",
+      "retain_data": "archive_allowed",
+      "deletion": "manifest_only_after_archive_verification"
+    },
+    "large_production": {
+      "retain_current": true,
+      "retain_previous": 1,
+      "retain_older": "archive_allowed",
+      "deletion": "forbidden_without_archive_receipt"
+    }
+  },
+  "g6_requirement": "selection_freeze_evidence_must_be_complete_or_explicitly_marked_unverifiable"
+}

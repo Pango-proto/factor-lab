@@ -1,0 +1,10 @@
+{
+  "schema_version": 2,
+  "protocol_id": "alpha_dimension_budget_v1",
+  "status": "superseded_legacy_probe_deleted_not_an_active_g6_gate",
+  "superseded_at": "2026-08-16",
+  "superseded_by": "config/future_alpha_neutralization_policy_v1.json",
+  "reason": "No alpha candidate exists yet, so per-alpha neutralization choices cannot be made and must not block G6. The replacement enforces explicit choices when each future alpha is registered.",
+  "historical_probe_run_id": null,
+  "historical_probe_semantics": "legacy exposure-only probe was deleted with the incoherent weight-metric chain and cannot be cited for the current risk basis"
+}

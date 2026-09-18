@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "protocol_id": "limit_discovery_seal_proxy_v1",
+  "status": "ready_pending_risk_set_freeze",
+  "preflight_manifest": "diagnostics/limit_discovery_preflight/run_id=limit_discovery_preflight_20260817/_MANIFEST.json",
+  "feature_id": "limit_discovery_seal_proxy_v1",
+  "primary_horizon_days": 1,
+  "secondary_horizon_days": [5],
+  "direction": 1,
+  "signal": "one_word_close_at_limit_up AND turnover_rate <= daily_cross_sectional_q20",
+  "source_tables": ["prices_daily", "valuation_daily"],
+  "pit_key": "trade_date",
+  "sample_policy": "A",
+  "continued_lock_report": true,
+  "opening_price_robustness_required": true,
+  "negative_direction_is_mechanism_falsification": true,
+  "did_corroboration": "descriptive_only_insufficient_power_for_return_effect",
+  "risk_set_version": 1,
+  "registration_blocker": "risk_set_version_1_status_candidate_not_frozen",
+  "attempt_accounting": "not_issued_until_risk_set_frozen"
+}

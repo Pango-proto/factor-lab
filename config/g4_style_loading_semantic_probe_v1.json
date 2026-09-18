@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g4_style_loading_semantic_probe_v1",
+  "frozen_at": "2026-08-16",
+  "run_policy": "exactly_once_per_risk_basis",
+  "risk_basis_id": "risk_basis_5649d34a30c03cef",
+  "risk_metric_id": "risk_metric_524163ea01abfe28",
+  "basis_status": "pending_valid_g3_and_statistical_spectrum",
+  "decision_sample_end_inclusive": "2025-02-28",
+  "l1_run_id": "l1_risk_exposure_history_20260814_e3b192fa61031760",
+  "descriptor_source_run_id": null,
+  "spectrum_run_id": null,
+  "descriptors": ["book_to_price","earnings_to_price","momentum_12_1","reversal_1m","roe_ttm_implied","asset_growth_yoy"],
+  "style_bases": {
+    "beta": ["risk_beta"],
+    "residual_volatility": ["risk_residual_volatility"],
+    "liquidity": ["risk_liquidity"],
+    "listing_age": ["risk_listing_age"]
+  },
+  "scope": "valid_L1_rows_on_existing_semantic_probe_window_dates",
+  "outputs": ["daily_r_squared","median","p25","p75","coverage"],
+  "forward_return_labels_used": false,
+  "IC_or_portfolio_metrics_forbidden": true,
+  "automatic_neutralization_decision": false,
+  "g4_2_membership_dependency": "listing_age_cost_is_descriptive_only_until_listing_age_passes_G4_2"
+}

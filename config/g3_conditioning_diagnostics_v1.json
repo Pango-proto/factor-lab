@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "protocol_id": "g3_conditioning_diagnostics_v1",
+  "registered_at": "2026-08-16",
+  "diagnostic_class": "A_design_second_moments_no_return_value_access",
+  "risk_basis_id": "risk_basis_5649d34a30c03cef",
+  "risk_metric_id": "risk_metric_524163ea01abfe28",
+  "comparison_metrics": ["structural_pit_v1", "sqrt_cap_counterfactual"],
+  "required_outputs": [
+    "minimum_eigen_direction_factor_loadings",
+    "minimum_eigen_direction_block_contributions",
+    "weight_effective_sample_size",
+    "weight_max_to_median_ratio",
+    "weight_top_1pct_share",
+    "condition_number_p50_p99_p999",
+    "invalid_date_category_effective_members",
+    "all_date_industry_weight_mass",
+    "log_condition_vs_negative_log_minimum_industry_mass",
+    "industry_mass_threshold_trigger_distribution",
+    "selected_date_current_l1_weight_projection",
+    "standalone_weight_metric_condition_comparison"
+  ],
+  "preselected_gate_failure_trade_dates": ["2022-06-27", "2023-07-06", "2023-07-12"],
+  "factor_block_rules": {
+    "country": ["risk_country"],
+    "industry": "prefix:risk_industry_",
+    "board": "prefix:risk_board_",
+    "index_membership": "prefix:risk_index_",
+    "style": "all_remaining_risk_columns"
+  },
+  "decision_use": "mechanism_diagnosis_only_no_gate_or_model_change",
+  "threshold_change": "forbidden",
+  "industry_mass_followup": {
+    "registered_before_full_history_mass_computation": true,
+    "mass_definition": "sum(weight_i for active industry s)/sum(weight_i in estimation domain)",
+    "mechanism_regression": "log(condition_number)=intercept+slope*(-log(minimum_active_industry_mass))+error",
+    "mechanism_confirmation_rule": {
+      "slope_target": 1.0,
+      "slope_absolute_tolerance": 0.2,
+      "minimum_r_squared": 0.9
+    },
+    "hypothesized_mass_floor_derivation_to_test_not_apply": "1/frozen_maximum_condition_number",
+    "application_in_this_run": "diagnostic_only_do_not_delete_columns_or_publish_g3",
+    "future_rule_commitments_if_evaluated": [
+      "apply any selected rule uniformly over full history",
+      "report every affected industry-date regardless of count",
+      "if one preregistered remediation leaves over-limit dates, do not scan a second remediation"
+    ]
+  },
+  "single_followup_rule_commitment": "After one preregistered remediation is applied uniformly, any remaining over-limit dates stay invalid; do not iterate to a second remediation using the same observed outcomes."
+}

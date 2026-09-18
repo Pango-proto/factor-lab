@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "config_id": "new_listing_window_derivation_v1",
+  "estimation_start": "2019-07-01",
+  "rolling_window_trading_days": 20,
+  "minimum_rolling_observations": 15,
+  "maximum_age_days": 300,
+  "steady_state_age_range": [200, 250],
+  "steady_state_tolerance": 0.20,
+  "maximum_one_price_limit_ratio": 0.05,
+  "minimum_stocks_per_age": 30,
+  "minimum_steady_state_age_points": 30,
+  "smoothing_window_days": 5,
+  "required_persistence_days": 10,
+  "fallback_days": 120,
+  "boards": {
+    "MAIN": {
+      "sample_start": "estimation_start",
+      "split_regime_break_scope": "MAIN"
+    },
+    "CHINEXT": {
+      "sample_start": "estimation_start",
+      "split_regime_break_scope": "CHINEXT"
+    },
+    "STAR": {
+      "sample_start": "external_fact:regime_break:STAR",
+      "split_regime_break_scope": null
+    },
+    "BSE": {
+      "sample_start": "external_fact:regime_break:BSE",
+      "split_regime_break_scope": null
+    }
+  }
+}

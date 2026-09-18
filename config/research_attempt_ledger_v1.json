@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "protocol_id": "research_attempt_ledger_v1",
+  "table": "research_attempt",
+  "resolution_table": "research_attempt_resolution",
+  "append_only": true,
+  "variant_count_definition": "count(all attempts by family_root_id, including submitted=false)",
+  "fdr_denominator_source": "research_attempt",
+  "ic_entry_requirement": "attempt_id",
+  "attempt_id_issuer": "FactorRegistryStore.issue_research_attempt",
+  "alpha_assertion_foreign_key": "alpha_assertion.attempt_id",
+  "alpha_submission_resolution": "research_attempt_resolution.submitted=true",
+  "unsubmitted_attempts_count": true,
+  "forbidden_accounting_sources": [
+    "FactorSpec.variant_count",
+    "alpha_assertion row count",
+    "research_events row count"
+  ]
+}

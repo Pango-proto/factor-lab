@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "protocol_id": "pit_contract_e2e_v1",
+  "sample_days": 20,
+  "minimum_cross_section": 100,
+  "placebo_permutations": 1000,
+  "seed": 20260817,
+  "t_plus_1_min_ic": 0.999,
+  "t_plus_5_max_abs_mean_ic": 0.15,
+  "placebo_max_abs_mean_ic": 0.03,
+  "placebo_q99_max": 0.05,
+  "attempt_accounting": "forbidden",
+  "alpha_result": "forbidden"
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "policy_id": "return_label_policy_v1",
+  "regression_universe": "all_a_share",
+  "per_board_regression": "forbidden",
+  "l2b": {
+    "label": "next_trading_day_realized_return",
+    "exchange_first_day": {
+      "action": "exclude",
+      "reason": "The first exchange price must not be compared with a pre-exchange NEEQ observation."
+    },
+    "resumption_day": {
+      "action": "exclude",
+      "reason": "The accumulated multi-day return is not a comparable one-day cross-sectional label."
+    },
+    "suspension_day": {
+      "action": "retain_if_prior_price_known",
+      "reason": "A held security has zero marked return while suspended; the signal-date universe still controls eligibility."
+    }
+  },
+  "l2a": {
+    "forward_window_event_policy": "exclude_window_if_exchange_first_day_or_resumption_occurs",
+    "reason": "Forward labels must cover comparable trading intervals without venue or accumulated-return breaks."
+  },
+  "portfolio_accounting": {
+    "resumption_day": "retain_as_realized_pnl_event",
+    "exchange_first_day": "not_applicable_before_exchange_listing"
+  }
+}

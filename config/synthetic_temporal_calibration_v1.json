@@ -1,0 +1,111 @@
+{
+  "experiment_id": "synthetic_temporal_calibration_v1",
+  "authorization": "user_execute_approved_preregistration",
+  "preregistration": "TEMPORAL_NULL_CALIBRATION_PREREG_V1_DRAFT_20260914.md",
+  "preregistration_sha256": "7143088ec4ced0700f316f8320a7b38585dcdc401af25b182620bcbd53099fda",
+  "seed": 20260818,
+  "namespace": 777,
+  "null_repetitions": 400,
+  "power_repetitions": 200,
+  "references": 99,
+  "assets": 128,
+  "market_dates": 153,
+  "evaluation_first": 20,
+  "evaluation_last": 147,
+  "horizon": 5,
+  "lookback": 20,
+  "minimum_signal_observations": 15,
+  "rcond": 1e-10,
+  "alpha": 0.05,
+  "null_failure_count": 35,
+  "power_wilson_lower": 0.8,
+  "wilson_z": 1.959963984540054,
+  "risk_columns": [
+    "risk_country",
+    "risk_industry_801010_SI",
+    "risk_industry_801030_SI",
+    "risk_industry_801040_SI",
+    "risk_industry_801050_SI",
+    "risk_industry_801080_SI",
+    "risk_industry_801110_SI",
+    "risk_industry_801120_SI",
+    "risk_industry_801130_SI",
+    "risk_industry_801140_SI",
+    "risk_industry_801150_SI",
+    "risk_industry_801160_SI",
+    "risk_industry_801170_SI",
+    "risk_industry_801180_SI",
+    "risk_industry_801200_SI",
+    "risk_industry_801210_SI",
+    "risk_industry_801230_SI",
+    "risk_industry_801710_SI",
+    "risk_industry_801720_SI",
+    "risk_industry_801730_SI",
+    "risk_industry_801740_SI",
+    "risk_industry_801750_SI",
+    "risk_industry_801760_SI",
+    "risk_industry_801770_SI",
+    "risk_industry_801780_SI",
+    "risk_industry_801790_SI",
+    "risk_industry_801880_SI",
+    "risk_industry_801890_SI",
+    "risk_industry_801950_SI",
+    "risk_industry_801960_SI",
+    "risk_industry_801970_SI",
+    "risk_industry_801980_SI",
+    "risk_board_CHINEXT",
+    "risk_board_MAIN",
+    "risk_size",
+    "risk_beta",
+    "risk_residual_volatility",
+    "risk_liquidity",
+    "risk_nonlinear_size",
+    "risk_listing_age",
+    "risk_board_STAR",
+    "risk_board_BSE"
+  ],
+  "risk_columns_metadata": {
+    "path": "gold/calculations/stage=l2_predictivity/operation=evaluate_research_probe/run_id=calc_evaluate_research_probe_39efb71386ea/artifact=factor_evaluation_panel/metadata.json",
+    "sha256": "b98ec4a61da8c5793b064fc092a3f9135abc0ba61ba7865951e74695c039c832"
+  },
+  "scenario_order": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      3,
+      0
+    ],
+    [
+      4,
+      0
+    ],
+    [
+      4,
+      1
+    ],
+    [
+      4,
+      2
+    ]
+  ],
+  "research_promotion_permitted": false,
+  "protected_files": {
+    "config/evaluation_framework_v1.json": "b98a3a435ac20bee67ca4faa7d0c690ae3fdbd34f26cda362716dfa821573fef",
+    "config/evaluation_framework_v2.json": "b4a3b4d3b8057503abfa5d6ffb9bb4cf076e59a7f8c6ab70e12be9afeef39cff",
+    "data/metadata/research_pipeline_latest_attempt.json": "9699992462592469fe7fc5f102c9caae1d5c7f0249d7da05a0f2fd591622f07e",
+    "data/metadata/research_pipeline_v2_latest_review.json": "f105abe57aaf6ae5c11b8b1daedac933c1e16615b05944efacf607bd5e968fb4",
+    "src-python/factor_matrix/calculation/components/probe_signal.py": "e3b65d9241c4743d586fe7980e593a1ac2177864261634433ccf94cda92286e6",
+    "src-python/factor_matrix/calculation/components/labels.py": "18914f60d3e4b49845bb46c4b3e84dd308f76d1f13e3b22e33e91a107e003edd",
+    "src-python/factor_matrix/calculation/l2/estimation_panel.py": "96e9ee7381999f4a4b01d93dbdcd950b610ec2e96d26d73333aa42bbdae1f32d"
+  }
+}

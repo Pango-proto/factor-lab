@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "protocol_id": "theme_observation_v1",
+  "role": "portfolio_side_compensating_control_for_common_directions_outside_J_stable",
+  "formula": "ActiveThemeExposure(theta)=sum_{i in theta}(portfolio_weight_i-benchmark_weight_i)",
+  "pit_rule": "theme membership and both weight vectors must be observable at the portfolio decision timestamp",
+  "historical_reconstruction_required": false,
+  "required_outputs": ["active_theme_exposure", "theme_member_count", "theme_crowding_flag", "observation_timestamp", "source_snapshot_id"],
+  "hard_gate": "must_be_operational_before_L4_or_any_production_optimizer",
+  "does_not_block": ["G6a basis freeze", "pre-production alpha registration", "L2a alpha evaluation"],
+  "forbidden": ["backfill historical theme membership from a current snapshot", "use the monitor as evidence that omitted covariance is zero"]
+}
