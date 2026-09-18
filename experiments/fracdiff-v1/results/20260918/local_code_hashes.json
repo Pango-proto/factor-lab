@@ -1,0 +1,13 @@
+{
+  "src-python/factor_matrix/calculation/services/fracdiff_run.py": "6e814eaeb1df9ac75148509e6e6f7fa80a87d8237bd47228d1105f68dff2eeca",
+  "src-python/factor_matrix/calculation/services/fracdiff_acceptance.py": "8df8a76dafdb2b165049e8280179d9f12f24cca395fde1ed2cd1f3a9e5cf0686",
+  "src-python/factor_matrix/calculation/services/fracdiff_verify.py": "b2184776a24fbc2f2b429328cfe0a395460b774f36d7ff963f98cd4971aacff1",
+  "src-python/factor_matrix/calculation/services/fracdiff_report.py": "d6cf45aa05e083c3d31dee10b89a412c8a68f0affdc58e5f91bba53d296b5782",
+  "src-python/factor_matrix/calculation/services/fracdiff_real.py": "b76a5ab0467b390536c7f495e309211f0e1f9fbab8366f2f3631adfc8a18efcb",
+  "src-python/factor_matrix/calculation/services/fracdiff.py": "de772f691564f1533c126b1b8945ec42476acbad80b3cbad009d4a69d03f96d3",
+  "src-python/factor_matrix/cli.py": "dc48179493473f2bdb34724d7e44c93b37b3385a41454ed059a069626b20fc82",
+  "src-python/factor_matrix/cli_parser.py": "182da81441f6eefe80eae7eb1bfc6a2b7a8087f625b588fb4ab2fef599474034",
+  "tests/test_fracdiff.py": "7a97b68cfeff0941e4fa0668ef7601c788f72bbd5d5f449e595b1af49b38ef0c",
+  "experiments/fracdiff-v1/requirements.lock": "fbdfb931a005f7c581b5dca4737fd62598ce746181484c2db3b4c7aeea5584e2",
+  "config/fracdiff_research_proposal_v1.json": "aeb1f381e9b196dce4508eed8d6a379a1c11e43d9a0b7dc388705c7dc922c6dd"
+}

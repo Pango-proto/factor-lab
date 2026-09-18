@@ -1,0 +1,56 @@
+[
+  {
+    "period": "full",
+    "arm": "d0",
+    "n": 2515,
+    "passed": 21
+  },
+  {
+    "period": "full",
+    "arm": "selected",
+    "n": 2515,
+    "passed": 1374
+  },
+  {
+    "period": "full",
+    "arm": "d1",
+    "n": 2515,
+    "passed": 2494
+  },
+  {
+    "period": "first_half",
+    "arm": "d0",
+    "n": 2637,
+    "passed": 17
+  },
+  {
+    "period": "first_half",
+    "arm": "selected",
+    "n": 2637,
+    "passed": 923
+  },
+  {
+    "period": "first_half",
+    "arm": "d1",
+    "n": 2637,
+    "passed": 2350
+  },
+  {
+    "period": "second_half",
+    "arm": "d0",
+    "n": 2515,
+    "passed": 31
+  },
+  {
+    "period": "second_half",
+    "arm": "selected",
+    "n": 2515,
+    "passed": 1312
+  },
+  {
+    "period": "second_half",
+    "arm": "d1",
+    "n": 2515,
+    "passed": 2500
+  }
+]
