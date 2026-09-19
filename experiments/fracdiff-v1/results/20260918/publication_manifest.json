@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "publication_date": "2026-09-18",
+  "branch": "research/fracdiff-v1",
+  "scope": "R0 result report, figures, aggregate summaries and verification; implementation and raw/intermediate data retained locally",
+  "source_data_as_of": "2026-09-17",
+  "input_event_cutoff": "2025-02-28",
+  "source_runs": {
+    "real": "real_4b18663145d322e4",
+    "synthetic": "synthetic_a0425d75c72231f8",
+    "input": "inputs_9e688337cae185db"
+  },
+  "source_hashes": {
+    "proposal_sha256": "aeb1f381e9b196dce4508eed8d6a379a1c11e43d9a0b7dc388705c7dc922c6dd",
+    "data_gate_sha256": "1a1d8aaa55cd8d9bd416e8d044160c51caa88904efcca1ebebb6da55c49a172e",
+    "input_manifest_sha256": "fcfc3b6363dd1a3386108bcffc5f83f4314d5d3c45751bd5ea48de1608a5e3bf",
+    "synthetic_manifest_sha256": "e45c636b76f4b60730ad0a6f4958ce854b426f818416c9eeaf3be51c9fafff51",
+    "support_sha256": "35cd5203b08ae01c86a35c91af9c1405576b87819e8a01dfd18e77fd3a900eb8"
+  },
+  "real_manifest_sha256": "bfbf6233c9b8ad5cf0ba8d8d26aa9c4b3d90fc14d0932ad9e1c8239fbc1fe42a",
+  "original_report_sha256": "febe0bfa64b7e4a79b936c5edf5b76f86402075f005bad9a49f79e5e8b9bbc78",
+  "original_report_manifest_sha256": "d54edbf175a3927b3b32d8714fd83d6c0133f4058df33839fe56b23d0d5e745a",
+  "code_provenance": {
+    "base_commit": "c7b36571d5e4c1cbfd5a0eabc7304042f0595d39",
+    "implementation_was_uncommitted": true,
+    "file_hashes": "local_code_hashes.json",
+    "implementation_published_in_this_bundle": false
+  },
+  "environment": {
+    "python": "3.12.4",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "packages": {
+      "kiwisolver": "1.5.1",
+      "packaging": "26.3",
+      "iniconfig": "2.3.0",
+      "fonttools": "4.65.0",
+      "tzdata": "2026.4",
+      "pytz": "2026.3.post1",
+      "numpy": "2.5.2",
+      "polars-runtime-32": "1.43.2",
+      "polars": "1.43.2",
+      "contourpy": "1.4.0",
+      "duckdb": "1.5.5",
+      "pyarrow": "23.0.1",
+      "Pygments": "2.20.0",
+      "python-dateutil": "2.9.0.post0",
+      "pytest": "8.4.2",
+      "matplotlib": "3.11.2",
+      "cycler": "0.12.1",
+      "pyparsing": "3.3.2",
+      "pandas": "2.3.3",
+      "pluggy": "1.6.0",
+      "patsy": "1.0.3",
+      "factor-matrix": "0.1.0",
+      "pillow": "12.3.0",
+      "six": "1.17.0",
+      "scipy": "1.18.1",
+      "statsmodels": "0.14.5"
+    },
+    "uv_lock_sha256": "d07ce02ad59e0abe279d2c53d440d35a9f58978005062c981cf9dcddfe04ce4b",
+    "research_lock_sha256": "fbdfb931a005f7c581b5dca4737fd62598ce746181484c2db3b4c7aeea5584e2"
+  },
+  "validation": {
+    "python_source_tests": {
+      "passed": 481,
+      "local_data_deselected": 3
+    },
+    "architecture_check": "passed",
+    "frozen_config_check": "passed",
+    "independent_verification": {
+      "status": "passed",
+      "training_assets_rechecked": 2766,
+      "independent_holm": "statsmodels multipletests, holm",
+      "freeze_order_verified": true,
+      "feature_files_hashed": 2766,
+      "feature_rows": 2725148,
+      "example_asset_ids": [
+        "000001.SZ",
+        "000002.SZ",
+        "000006.SZ",
+        "000008.SZ"
+      ],
+      "independent_scalar_feature_checks": 112,
+      "holdout_feature_rows": 0,
+      "unregistered_validation_arms_materialized": false
+    },
+    "research_pointers_unchanged": true,
+    "statistical_outputs_identical_after_causal_fix": true
+  },
+  "publication_edits": [
+    "Markdown format with embedded figures; publication scope and portable provenance paths; complete-validation wording clarified; coverage caveats integrated; statistical results unchanged"
+  ],
+  "outputs": {
+    "fixed_example_paths.png": {
+      "sha256": "bf346aa0eb2fe951b64219472e4bd225818e93321892610ebc1444e2bb43f8f9",
+      "bytes": 549236
+    },
+    "local_code_hashes.json": {
+      "sha256": "38dd5ac44de07722137e4bbf90d1bf2bae50ea0888073f978036e6b58af856ef",
+      "bytes": 1366
+    },
+    "matched_validation.json": {
+      "sha256": "ee841825b039fe4d981bfef8b77bf628f72e755ae627ac88828ee0d15195c88b",
+      "bytes": 791
+    },
+    "real_summary.json": {
+      "sha256": "7ec94272ae932095a2c5afced876d30f4b123002bf29c34a78e1427fbf48ed60",
+      "bytes": 3305
+    },
+    "selection_validation.png": {
+      "sha256": "5f48abcea6bb03a8d08f915c007454942d9947af0e652da94f03c696cb6fd9d4",
+      "bytes": 64012
+    },
+    "synthetic_summary.json": {
+      "sha256": "0bcb68c30c0e1dc6d47f8919de872b58a2ad8429d0e9b74df15771ea49e65f48",
+      "bytes": 2374
+    },
+    "training_adf_correlation.png": {
+      "sha256": "cbc9171d0b439754651685802411791ef4239ba196ad459887bcec5ba5f04755",
+      "bytes": 106177
+    },
+    "verification.json": {
+      "sha256": "f7ab6542bd5d97453520279b9e50024a3ed26aadba593c3a0bc7afa81afe18aa",
+      "bytes": 435
+    },
+    "README.md": {
+      "sha256": "3ab2c8c00155ef7130afafa16f493a497393aab44f7b038c0a288a351d4c1b30",
+      "bytes": 8289
+    }
+  }
+}

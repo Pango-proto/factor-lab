@@ -1,0 +1,128 @@
+{
+  "counts": {
+    "original_cohort": 5007,
+    "training_available": 2766,
+    "selected_d": 2748,
+    "validation_full_available": 2533,
+    "selected_validation_full_available": 2515,
+    "validation_new_assets_coverage_only": 486
+  },
+  "selected_distribution": {
+    "0.9": 266,
+    "0.6": 467,
+    "None": 2259,
+    "0.3": 142,
+    "0.7": 483,
+    "0.2": 117,
+    "0.0": 57,
+    "0.8": 394,
+    "0.5": 385,
+    "1.0": 101,
+    "0.4": 271,
+    "0.1": 65
+  },
+  "board_coverage": [
+    {
+      "training_board": "BSE",
+      "original_cohort": 130,
+      "training_eligible": 0,
+      "validation_full_available": 0
+    },
+    {
+      "training_board": "CHINEXT",
+      "original_cohort": 1223,
+      "training_eligible": 600,
+      "validation_full_available": 558
+    },
+    {
+      "training_board": "MAIN",
+      "original_cohort": 3166,
+      "training_eligible": 2137,
+      "validation_full_available": 1946
+    },
+    {
+      "training_board": "STAR",
+      "original_cohort": 488,
+      "training_eligible": 29,
+      "validation_full_available": 29
+    }
+  ],
+  "validation": [
+    {
+      "period": "first_half",
+      "arm": "d0",
+      "tested_or_unavailable": 2766,
+      "available": 2655,
+      "joint_screen_passed": 17
+    },
+    {
+      "period": "first_half",
+      "arm": "d1",
+      "tested_or_unavailable": 2766,
+      "available": 2655,
+      "joint_screen_passed": 2368
+    },
+    {
+      "period": "first_half",
+      "arm": "selected",
+      "tested_or_unavailable": 2766,
+      "available": 2637,
+      "joint_screen_passed": 923
+    },
+    {
+      "period": "full",
+      "arm": "d0",
+      "tested_or_unavailable": 2766,
+      "available": 2533,
+      "joint_screen_passed": 21
+    },
+    {
+      "period": "full",
+      "arm": "d1",
+      "tested_or_unavailable": 2766,
+      "available": 2533,
+      "joint_screen_passed": 2511
+    },
+    {
+      "period": "full",
+      "arm": "selected",
+      "tested_or_unavailable": 2766,
+      "available": 2515,
+      "joint_screen_passed": 1374
+    },
+    {
+      "period": "second_half",
+      "arm": "d0",
+      "tested_or_unavailable": 2766,
+      "available": 2533,
+      "joint_screen_passed": 31
+    },
+    {
+      "period": "second_half",
+      "arm": "d1",
+      "tested_or_unavailable": 2766,
+      "available": 2533,
+      "joint_screen_passed": 2518
+    },
+    {
+      "period": "second_half",
+      "arm": "selected",
+      "tested_or_unavailable": 2766,
+      "available": 2515,
+      "joint_screen_passed": 1312
+    }
+  ],
+  "source_audit": {
+    "adjustment_events": 37043,
+    "provider": "tushare",
+    "return_construction": "consecutive provider raw_close*adj_factor ratios; no future anchor division",
+    "event_ledger_independently_verified": false,
+    "historical_revision_risk_retained": true,
+    "interpretation": "provider-adjusted reconstructed total-return diagnostic; not verified cash corporate-action accounting"
+  },
+  "statistical_interpretation": "descriptive finite-filter diagnostics; no stationarity proof, alpha, or tradable claim",
+  "feature_scope": "all training arms; validation only frozen selected,d0,d1 may be evaluated",
+  "selected_d_sha256": "94357b6e55573eb755f1bcf2c4e5b0d021bc97b2ee85a43e2283a10c1872249a",
+  "engineering_passed": true,
+  "historical_pit_verified": false
+}

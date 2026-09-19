@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "training_assets_rechecked": 2766,
+  "independent_holm": "statsmodels multipletests, holm",
+  "freeze_order_verified": true,
+  "feature_files_hashed": 2766,
+  "feature_rows": 2725148,
+  "example_asset_ids": [
+    "000001.SZ",
+    "000002.SZ",
+    "000006.SZ",
+    "000008.SZ"
+  ],
+  "independent_scalar_feature_checks": 112,
+  "holdout_feature_rows": 0,
+  "unregistered_validation_arms_materialized": false
+}
